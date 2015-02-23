@@ -14,6 +14,20 @@ MainWindow::MainWindow(QWidget *parent) :
 //    connect(ui->pushButton, &QPushButton::clicked, this, &MainWindow::loadStats);
 //    connect(m_WP, &QWebPage::loadProgress, ui->progressBar, &QProgressBar::setValue);
 //    connect(m_WP, &QWebPage::loadFinished, this, &MainWindow::loadFinished);
+    QStringList months;
+    months << "January" << "February" << "March" << "April" <<
+              "May" << "June" << "July" << "August" <<
+              "September" << "October" << "November" << "December";
+    QStringList years;
+    years << "2010" << "2011" << "2012" << "2013" << "2014" << "2015";
+
+    ui->cbFromMonth->addItems(months);
+    ui->cbFromMonth->setCurrentIndex(8);
+    ui->cbToMonth->addItems(months);
+    ui->cbToMonth->setCurrentIndex(5);
+    ui->cbFromYear->addItems(years);
+    ui->cbToYear->addItems(years);
+    ui->cbToYear->setCurrentIndex(ui->cbToYear->count() - 1);
 }
 
 MainWindow::~MainWindow()
