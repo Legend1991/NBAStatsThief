@@ -19,6 +19,7 @@ public:
 private:
     void loadStats();
     void loadFinished(bool ok);
+    void setTimeRangeContent();
 
     Ui::MainWindow *ui;
     QWebPage *m_WP;
