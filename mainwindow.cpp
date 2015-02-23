@@ -11,9 +11,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     m_WP = new QWebPage(this);
-    connect(ui->pushButton, &QPushButton::clicked, this, &MainWindow::loadStats);
-    connect(m_WP, &QWebPage::loadProgress, ui->progressBar, &QProgressBar::setValue);
-    connect(m_WP, &QWebPage::loadFinished, this, &MainWindow::loadFinished);
+//    connect(ui->pushButton, &QPushButton::clicked, this, &MainWindow::loadStats);
+//    connect(m_WP, &QWebPage::loadProgress, ui->progressBar, &QProgressBar::setValue);
+//    connect(m_WP, &QWebPage::loadFinished, this, &MainWindow::loadFinished);
 }
 
 MainWindow::~MainWindow()
