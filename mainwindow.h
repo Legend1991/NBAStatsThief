@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QWebPage>
 
 namespace Ui {
 class MainWindow;
@@ -17,12 +16,10 @@ public:
     ~MainWindow();
 
 private:
-    void loadStats();
-    void loadFinished(bool ok);
+    void stealStats();
     void setTimeRangeContent();
 
     Ui::MainWindow *ui;
-    QWebPage *m_WP;
 };
 
 #endif // MAINWINDOW_H

@@ -1,19 +1,14 @@
+#include <QDebug>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QWebFrame>
-#include <QWebElement>
-#include <QDebug>
-#include <QtConcurrent/QtConcurrent>
+#include "statsloader.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    m_WP = new QWebPage(this);
-//    connect(ui->pushButton, &QPushButton::clicked, this, &MainWindow::loadStats);
-//    connect(m_WP, &QWebPage::loadProgress, ui->progressBar, &QProgressBar::setValue);
-//    connect(m_WP, &QWebPage::loadFinished, this, &MainWindow::loadFinished);
+    connect(ui->pbStartStealing, &QPushButton::clicked, this, &MainWindow::stealStats);
     setTimeRangeContent();
 }
 
@@ -40,42 +35,10 @@ void MainWindow::setTimeRangeContent()
     ui->cbToMonth->setCurrentIndex(5);
 }
 
-void MainWindow::loadStats()
+void MainWindow::stealStats()
 {
-//    QUrl url("http://mi.nba.com/schedule/#!/02/2015");
-//    QWebFrame *wf = m_WP->mainFrame();
-//    QtConcurrent::run(wf, &QWebFrame::load, url);
-    m_WP->mainFrame()->load(QUrl("http://mi.nba.com/schedule/#!/02/2015"));
-}
-
-void MainWindow::loadFinished(bool ok)
-{
-    QString page = m_WP->mainFrame()->toPlainText();
-
-    QStringList rows = page.split("\n");
-    QStringList validRows;
-    foreach (QString row, rows)
-    {
-        QStringList splitedRow = row.trimmed().split(QRegExp("\\s+|\\t+"));
-        if (splitedRow.count() == 8 ||
-                (splitedRow.count() == 3 && QRegExp(".*\\d$").exactMatch(row)))
-        {
-            validRows.append(row);
-        }
-    }
-
-    if (validRows.isEmpty()) {
-        m_WP->triggerAction(QWebPage::ReloadAndBypassCache);
-        return;
-    }
-
-    foreach (QString row, validRows)
-    {
-        qDebug() << row;
-    }
-
-    if (!ok)
-    {
-        qDebug() << "Something wrong!";
-    }
+    QDate fromDate = QDate(ui->cbFromYear->currentData().toInt(), ui->cbFromMonth->currentData().toInt(), 1);
+    QDate toDate = QDate(ui->cbToYear->currentData().toInt(), ui->cbToMonth->currentData().toInt(), 1);
+    StatsLoader loader(fromDate, toDate);
+    loader.load();
 }
