@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QDate>
+#include "statsloader.h"
 
 namespace Ui {
 class MainWindow;
@@ -18,8 +20,12 @@ public:
 private:
     void stealStats();
     void setTimeRangeContent();
+    void loadStarted(QDate currDate);
+    void loadProgress(int progress);
 
     Ui::MainWindow *ui;
+    StatsLoader m_Loader;
+    QDate m_CurrDate;
 };
 
 #endif // MAINWINDOW_H

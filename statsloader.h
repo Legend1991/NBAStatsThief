@@ -9,15 +9,26 @@ class StatsLoader : public QObject
     Q_OBJECT
 
 public:
-    explicit StatsLoader(QDate fromDate, QDate toDate, QObject *parent = 0);
+    explicit StatsLoader(QObject *parent = 0);
     ~StatsLoader();
     void load();
+    void setTimeRange(QDate fromDate, QDate toDate) {
+        m_FromDate = fromDate;
+        m_ToDate = toDate;
+    }
+
+signals:
+    void loadStarted(QDate currDate);
+    void loadProgress(int progress);
 
 private:
+    void loadCurrentMonth();
+    void loadNextMonth();
     void loadFinished(bool ok);
 
     QDate m_FromDate;
     QDate m_ToDate;
+    QDate m_CurrDate;
     QWebPage m_Page;
 };
 

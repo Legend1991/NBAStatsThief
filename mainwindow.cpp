@@ -1,15 +1,18 @@
 #include <QDebug>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "statsloader.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    m_Loader(),
+    m_CurrDate()
 {
     ui->setupUi(this);
     connect(ui->pbStartStealing, &QPushButton::clicked, this, &MainWindow::stealStats);
     setTimeRangeContent();
+    connect(&m_Loader, &StatsLoader::loadStarted, this, &MainWindow::loadStarted);
+    connect(&m_Loader, &StatsLoader::loadProgress, this, &MainWindow::loadProgress);
 }
 
 MainWindow::~MainWindow()
@@ -39,6 +42,19 @@ void MainWindow::stealStats()
 {
     QDate fromDate = QDate(ui->cbFromYear->currentData().toInt(), ui->cbFromMonth->currentData().toInt(), 1);
     QDate toDate = QDate(ui->cbToYear->currentData().toInt(), ui->cbToMonth->currentData().toInt(), 1);
-    StatsLoader loader(fromDate, toDate);
-    loader.load();
+    m_Loader.setTimeRange(fromDate, toDate);
+    m_Loader.load();
+}
+
+void MainWindow::loadStarted(QDate currDate)
+{
+    m_CurrDate = currDate;
+    QString status = QString("Load stats for %1 0%").arg(m_CurrDate.toString("MMMM"));
+    ui->statusBar->showMessage(status);
+}
+
+void MainWindow::loadProgress(int progress)
+{
+    QString status = QString("Load stats for %1 %2%").arg(m_CurrDate.toString("MMMM")).arg(progress);
+    ui->statusBar->showMessage(status);
 }
