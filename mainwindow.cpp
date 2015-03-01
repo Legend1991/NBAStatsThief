@@ -2,6 +2,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+const int JANUARY = 1;
+const int DECEMBER = 12;
+const int START_YEAR = 2010;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -22,14 +26,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::setTimeRangeContent()
 {
-    for (int i = 2010; i <= QDate::currentDate().year(); ++i)
+    for (int i = START_YEAR; i <= QDate::currentDate().year(); ++i)
     {
         ui->cbFromYear->addItem(QString::number(i), i);
         ui->cbToYear->addItem(QString::number(i), i);
     }
     ui->cbToYear->setCurrentIndex(ui->cbToYear->count() - 1);
 
-    for (int i = 1; i <= 12; ++i)
+    for (int i = JANUARY; i <= DECEMBER; ++i)
     {
         ui->cbFromMonth->addItem(QDate::longMonthName(i), i);
         ui->cbToMonth->addItem(QDate::longMonthName(i), i);

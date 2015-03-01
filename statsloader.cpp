@@ -56,7 +56,8 @@ void StatsLoader::loadFinished(bool ok)
         }
     }
 
-    if (validRows.isEmpty()) {
+    if (validRows.isEmpty() || !ok)
+    {
         qDebug() << "Load empty!" << endl << m_Page->mainFrame()->url() << endl << page;
         m_Page->triggerAction(QWebPage::ReloadAndBypassCache);
         return;
@@ -65,11 +66,6 @@ void StatsLoader::loadFinished(bool ok)
     foreach (QString row, validRows)
     {
         qDebug() << row;
-    }
-
-    if (!ok)
-    {
-        qDebug() << "Something wrong!";
     }
 
     loadNextMonth();
