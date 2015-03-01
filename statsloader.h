@@ -29,7 +29,7 @@ private:
     QDate m_FromDate;
     QDate m_ToDate;
     QDate m_CurrDate;
-    QWebPage m_Page;
+    QWebPage *m_Page;
 };
 
 #endif // STATSLOADER_H

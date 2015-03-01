@@ -14,9 +14,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    statsloader.cpp
+    statsloader.cpp \
+    gamemodel.cpp
 
 HEADERS  += mainwindow.h \
-    statsloader.h
+    statsloader.h \
+    gamemodel.h
 
 FORMS    += mainwindow.ui

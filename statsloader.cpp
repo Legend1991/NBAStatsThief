@@ -8,11 +8,11 @@ const int SEPTEMBER = 9;
 StatsLoader::StatsLoader(QObject *parent) :
     QObject(parent),
     m_FromDate(),
-    m_ToDate(),
-    m_Page()
+    m_ToDate()
 {
-    connect(&m_Page, &QWebPage::loadProgress, this, &StatsLoader::loadProgress);
-    connect(&m_Page, &QWebPage::loadFinished, this, &StatsLoader::loadFinished);
+    m_Page = new QWebPage(this);
+    connect(m_Page, &QWebPage::loadProgress, this, &StatsLoader::loadProgress);
+    connect(m_Page, &QWebPage::loadFinished, this, &StatsLoader::loadFinished);
 }
 
 StatsLoader::~StatsLoader()
@@ -37,12 +37,12 @@ void StatsLoader::loadCurrentMonth()
     emit loadStarted(m_CurrDate);
     QString month = QString("%1").arg(m_CurrDate.month(), 2, 10, QChar('0'));
     QUrl url = QUrl(QString("http://mi.nba.com/schedule/#!/%1/%2").arg(month).arg(m_CurrDate.year()));
-    m_Page.mainFrame()->load(url);
+    m_Page->mainFrame()->load(url);
 }
 
 void StatsLoader::loadFinished(bool ok)
 {
-    QString page = m_Page.mainFrame()->toPlainText();
+    QString page = m_Page->mainFrame()->toPlainText();
 
     QStringList rows = page.split("\n");
     QStringList validRows;
@@ -57,8 +57,8 @@ void StatsLoader::loadFinished(bool ok)
     }
 
     if (validRows.isEmpty()) {
-        qDebug() << "Load empty!" << endl << m_Page.mainFrame()->url() << endl << page;
-        m_Page.triggerAction(QWebPage::ReloadAndBypassCache);
+        qDebug() << "Load empty!" << endl << m_Page->mainFrame()->url() << endl << page;
+        m_Page->triggerAction(QWebPage::ReloadAndBypassCache);
         return;
     }
 
