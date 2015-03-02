@@ -1,5 +1,6 @@
 #include <QWebFrame>
 #include "statsloader.h"
+#include "persistentcookiejar.h"
 
 const int JULY = 7;
 const int AUGUST = 8;
@@ -10,7 +11,10 @@ StatsLoader::StatsLoader(QObject *parent) :
     m_FromDate(),
     m_ToDate()
 {
+    PersistentCookieJar* jar = new PersistentCookieJar(this);
     m_Page = new QWebPage(this);
+    m_Page->networkAccessManager()->setCookieJar(jar);
+    jar->setParent(this);
     connect(m_Page, &QWebPage::loadProgress, this, &StatsLoader::loadProgress);
     connect(m_Page, &QWebPage::loadFinished, this, &StatsLoader::loadFinished);
 }
