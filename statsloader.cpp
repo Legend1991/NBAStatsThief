@@ -1,6 +1,5 @@
 #include <QWebFrame>
 #include "statsloader.h"
-#include "persistentcookiejar.h"
 
 const int JULY = 7;
 const int AUGUST = 8;
@@ -11,16 +10,14 @@ StatsLoader::StatsLoader(QObject *parent) :
     m_FromDate(),
     m_ToDate()
 {
-    PersistentCookieJar* jar = new PersistentCookieJar(this);
-    m_Page = new QWebPage(this);
-    m_Page->networkAccessManager()->setCookieJar(jar);
-    jar->setParent(this);
-    connect(m_Page, &QWebPage::loadProgress, this, &StatsLoader::loadProgress);
-    connect(m_Page, &QWebPage::loadFinished, this, &StatsLoader::loadFinished);
+    m_WebView = new QWebView();
+    connect(m_WebView, &QWebView::loadProgress, this, &StatsLoader::loadProgress);
+    connect(m_WebView, &QWebView::loadFinished, this, &StatsLoader::loadFinished);
 }
 
 StatsLoader::~StatsLoader()
 {
+    delete m_WebView;
 }
 
 void StatsLoader::load()
@@ -41,12 +38,12 @@ void StatsLoader::loadCurrentMonth()
     emit loadStarted(m_CurrDate);
     QString month = QString("%1").arg(m_CurrDate.month(), 2, 10, QChar('0'));
     QUrl url = QUrl(QString("http://mi.nba.com/schedule/#!/%1/%2").arg(month).arg(m_CurrDate.year()));
-    m_Page->mainFrame()->load(url);
+    m_WebView->load(url);
 }
 
 void StatsLoader::loadFinished(bool ok)
 {
-    QString page = m_Page->mainFrame()->toPlainText();
+    QString page = m_WebView->page()->mainFrame()->toPlainText();
 
     QStringList rows = page.split("\n");
     QStringList validRows;
@@ -62,8 +59,9 @@ void StatsLoader::loadFinished(bool ok)
 
     if (validRows.isEmpty() || !ok)
     {
-        qDebug() << "Load empty!" << endl << m_Page->mainFrame()->url() << endl << page;
-        m_Page->triggerAction(QWebPage::ReloadAndBypassCache);
+        qDebug() << "Load empty!" << endl << m_WebView->url() << endl << page;
+//        m_WebView->pageAction(QWebPage::ReloadAndBypassCache);
+        m_WebView->load(m_WebView->url());
         return;
     }
 

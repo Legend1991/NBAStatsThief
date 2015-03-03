@@ -2,7 +2,7 @@
 #define STATSLOADER_H
 
 #include <QDate>
-#include <QWebPage>
+#include <QWebView>
 
 class StatsLoader : public QObject
 {
@@ -29,7 +29,7 @@ private:
     QDate m_FromDate;
     QDate m_ToDate;
     QDate m_CurrDate;
-    QWebPage *m_Page;
+    QWebView *m_WebView;
 };
 
 #endif // STATSLOADER_H

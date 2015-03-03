@@ -15,12 +15,10 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     statsloader.cpp \
-    gamemodel.cpp \
-    persistentcookiejar.cpp
+    gamemodel.cpp
 
 HEADERS  += mainwindow.h \
     statsloader.h \
-    gamemodel.h \
-    persistentcookiejar.h
+    gamemodel.h
 
 FORMS    += mainwindow.ui
