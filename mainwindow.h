@@ -22,6 +22,7 @@ private:
     void setTimeRangeContent();
     void loadStarted(QDate currDate);
     void loadProgress(int progress);
+    QString getDateString(QDate &date, QString format);
 
     Ui::MainWindow *ui;
     StatsLoader m_Loader;

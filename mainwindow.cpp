@@ -4,7 +4,7 @@
 
 const int JANUARY = 1;
 const int DECEMBER = 12;
-const int START_YEAR = 2010;
+const int START_YEAR = 2012;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -35,8 +35,10 @@ void MainWindow::setTimeRangeContent()
 
     for (int i = JANUARY; i <= DECEMBER; ++i)
     {
-        ui->cbFromMonth->addItem(QDate::longMonthName(i), i);
-        ui->cbToMonth->addItem(QDate::longMonthName(i), i);
+        QDate date(START_YEAR, i, 1);
+        QString month = getDateString(date, "MMMM");
+        ui->cbFromMonth->addItem(month, i);
+        ui->cbToMonth->addItem(month, i);
     }
     ui->cbFromMonth->setCurrentIndex(9);
     ui->cbToMonth->setCurrentIndex(5);
@@ -53,12 +55,18 @@ void MainWindow::stealStats()
 void MainWindow::loadStarted(QDate currDate)
 {
     m_CurrDate = currDate;
-    QString status = QString("Load stats for %1 0%").arg(m_CurrDate.toString("MMMM"));
+    QString status = QString("Load stats for %1 (0%)").arg(getDateString(m_CurrDate, "MMMM yyyy"));
     ui->statusBar->showMessage(status);
 }
 
 void MainWindow::loadProgress(int progress)
 {
-    QString status = QString("Load stats for %1 %2%").arg(m_CurrDate.toString("MMMM")).arg(progress);
+    QString status = QString("Load stats for %1 (%2%)").arg(getDateString(m_CurrDate, "MMMM yyyy")).arg(progress);
     ui->statusBar->showMessage(status);
+}
+
+QString MainWindow::getDateString(QDate &date, QString format)
+{
+    QLocale locale(QLocale::English, QLocale::UnitedStates);
+    return locale.toString(date, format);
 }

@@ -25,6 +25,10 @@ private:
     void loadCurrentMonth();
     void loadNextMonth();
     void loadFinished(bool ok);
+    bool isDateRow(QString &row);
+    bool isGameRow(QString &row);
+    QStringList tokenizeRow(QString &row);
+    QDate parseDate(QString &row);
 
     QDate m_FromDate;
     QDate m_ToDate;
