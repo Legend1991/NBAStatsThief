@@ -43,11 +43,8 @@ void StatsLoader::loadCurrentMonth()
     }
 
     emit loadStarted(m_CurrDate);
-//    qDebug() << "\n\n>>>>>>>>>>>" <<m_CurrDate.toString("MMMM yyyy") << "\n\n";
     QString month = QString("%1").arg(m_CurrDate.month(), 2, 10, QChar('0'));
     QUrl url = QUrl(QString("http://mi.nba.com/schedule/#!/%1/%2").arg(month).arg(m_CurrDate.year()));
-//    m_WebView->setUrl(url);
-//    m_WebView->pageAction(QWebPage::ReloadAndBypassCache);
     m_WebView->setUrl(url);
     m_WebView->load(url);
 }
@@ -56,12 +53,8 @@ void StatsLoader::loadFinished(bool ok)
 {
     QString page = m_WebView->page()->mainFrame()->toPlainText();
 
-//    qDebug() << m_WebView->url() << endl << page;
-
     if (!ok || !isValidPage(page))
     {
-//        qDebug() << "Load empty!" << endl << m_WebView->url() << endl << page;
-//        m_WebView->pageAction(QWebPage::ReloadAndBypassCache);
         m_WebView->load(m_WebView->url());
         return;
     }
@@ -118,14 +111,6 @@ QStringList StatsLoader::tokenizeRow(QString &row)
     return row.trimmed().split(QRegExp("\\s+|\\t+"));
 }
 
-QDate StatsLoader::parseDate(QString &row)
-{
-    QStringList dateTokens = tokenizeRow(row);
-    QLocale locale(QLocale::English, QLocale::UnitedStates);
-    QString strDate = QString("%1%2%3").arg(m_CurrDate.year()).arg(dateTokens.at(1)).arg(dateTokens.at(2));
-    return locale.toDate(strDate, "yyyyMMMdd");
-}
-
 void StatsLoader::parsePage(QString &page)
 {
     QStringList rows = page.split("\n");
@@ -141,11 +126,29 @@ void StatsLoader::parsePage(QString &page)
 
     foreach (QString row, validRows)
     {
+        QDate date;
+
         if (isDateRow(row))
         {
-            QDate date = parseDate(row);
-            qDebug() << date;
+            date = parseDate(row);
+        }
+        else if (isGameRow(row))
+        {
+            GameModel game = parseGame(date, row);
         }
         qDebug() << row;
     }
+}
+
+QDate StatsLoader::parseDate(QString &row)
+{
+    QStringList dateTokens = tokenizeRow(row);
+    QLocale locale(QLocale::English, QLocale::UnitedStates);
+    QString strDate = QString("%1%2%3").arg(m_CurrDate.year()).arg(dateTokens.at(1)).arg(dateTokens.at(2));
+    return locale.toDate(strDate, "yyyyMMMdd");
+}
+
+GameModel parseGame(QDate date, QString &row)
+{
+
 }

@@ -3,6 +3,7 @@
 
 #include <QDate>
 #include <QWebView>
+#include "gamemodel.h"
 
 class StatsLoader : public QObject
 {
@@ -28,6 +29,7 @@ private:
     void parsePage(QString &page);
     QStringList tokenizeRow(QString &row);
     QDate parseDate(QString &row);
+    GameModel parseGame(QDate date, QString &row);
 
     QDate m_FromDate;
     QDate m_ToDate;
