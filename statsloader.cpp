@@ -26,6 +26,13 @@ void StatsLoader::load()
     loadCurrentMonth();
 }
 
+void StatsLoader::setTimeRange(QDate fromDate, QDate toDate)
+{
+    QDate currentDate = QDate::currentDate();
+    m_FromDate = fromDate > currentDate ? currentDate : fromDate;
+    m_ToDate = toDate > currentDate ? currentDate : toDate;
+}
+
 void StatsLoader::loadCurrentMonth()
 {
     if (m_CurrDate.month() == JULY ||
@@ -49,17 +56,9 @@ void StatsLoader::loadFinished(bool ok)
 {
     QString page = m_WebView->page()->mainFrame()->toPlainText();
 
-    QStringList rows = page.split("\n");
-    QStringList validRows;
-    foreach (QString row, rows)
-    {
-        if (isGameRow(row) || isDateRow(row))
-        {
-            validRows.append(row);
-        }
-    }
+    qDebug() << m_WebView->url() << endl << page;
 
-    if (validRows.isEmpty() || !ok)
+    if (!ok || !isValidPage(page))
     {
 //        qDebug() << "Load empty!" << endl << m_WebView->url() << endl << page;
 //        m_WebView->pageAction(QWebPage::ReloadAndBypassCache);
@@ -67,15 +66,15 @@ void StatsLoader::loadFinished(bool ok)
         return;
     }
 
-    foreach (QString row, validRows)
-    {
-        if (isDateRow(row))
-        {
-            QDate date = parseDate(row);
-            qDebug() << date;
-        }
-        qDebug() << row;
-    }
+//    foreach (QString row, validRows)
+//    {
+//        if (isDateRow(row))
+//        {
+//            QDate date = parseDate(row);
+//            qDebug() << date;
+//        }
+//        qDebug() << row;
+//    }
 
     loadNextMonth();
 }
@@ -100,6 +99,26 @@ bool StatsLoader::isGameRow(QString &row)
 {
     QStringList splitedRow = tokenizeRow(row);
     return splitedRow.count() == 8;
+}
+
+bool StatsLoader::isValidPage(QString &page)
+{
+    if (page.isEmpty())
+    {
+        return false;
+    }
+
+    QStringList rows = page.split("\n");
+
+    foreach (QString row, rows)
+    {
+        if (isGameRow(row) || isDateRow(row))
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 QStringList StatsLoader::tokenizeRow(QString &row)

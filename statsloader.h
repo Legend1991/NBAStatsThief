@@ -12,10 +12,7 @@ public:
     explicit StatsLoader(QObject *parent = 0);
     ~StatsLoader();
     void load();
-    void setTimeRange(QDate fromDate, QDate toDate) {
-        m_FromDate = fromDate;
-        m_ToDate = toDate;
-    }
+    void setTimeRange(QDate fromDate, QDate toDate);
 
 signals:
     void loadStarted(QDate currDate);
@@ -27,6 +24,7 @@ private:
     void loadFinished(bool ok);
     bool isDateRow(QString &row);
     bool isGameRow(QString &row);
+    bool isValidPage(QString &page);
     QStringList tokenizeRow(QString &row);
     QDate parseDate(QString &row);
 
