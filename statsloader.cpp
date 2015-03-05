@@ -43,7 +43,7 @@ void StatsLoader::loadCurrentMonth()
     }
 
     emit loadStarted(m_CurrDate);
-    qDebug() << "\n\n>>>>>>>>>>>" <<m_CurrDate.toString("MMMM yyyy") << "\n\n";
+//    qDebug() << "\n\n>>>>>>>>>>>" <<m_CurrDate.toString("MMMM yyyy") << "\n\n";
     QString month = QString("%1").arg(m_CurrDate.month(), 2, 10, QChar('0'));
     QUrl url = QUrl(QString("http://mi.nba.com/schedule/#!/%1/%2").arg(month).arg(m_CurrDate.year()));
 //    m_WebView->setUrl(url);
@@ -56,7 +56,7 @@ void StatsLoader::loadFinished(bool ok)
 {
     QString page = m_WebView->page()->mainFrame()->toPlainText();
 
-    qDebug() << m_WebView->url() << endl << page;
+//    qDebug() << m_WebView->url() << endl << page;
 
     if (!ok || !isValidPage(page))
     {
@@ -66,15 +66,7 @@ void StatsLoader::loadFinished(bool ok)
         return;
     }
 
-//    foreach (QString row, validRows)
-//    {
-//        if (isDateRow(row))
-//        {
-//            QDate date = parseDate(row);
-//            qDebug() << date;
-//        }
-//        qDebug() << row;
-//    }
+    parsePage(page);
 
     loadNextMonth();
 }
@@ -132,4 +124,28 @@ QDate StatsLoader::parseDate(QString &row)
     QLocale locale(QLocale::English, QLocale::UnitedStates);
     QString strDate = QString("%1%2%3").arg(m_CurrDate.year()).arg(dateTokens.at(1)).arg(dateTokens.at(2));
     return locale.toDate(strDate, "yyyyMMMdd");
+}
+
+void StatsLoader::parsePage(QString &page)
+{
+    QStringList rows = page.split("\n");
+    QStringList validRows;
+
+    foreach (QString row, rows)
+    {
+        if (isGameRow(row) || isDateRow(row))
+        {
+            validRows.append(row);
+        }
+    }
+
+    foreach (QString row, validRows)
+    {
+        if (isDateRow(row))
+        {
+            QDate date = parseDate(row);
+            qDebug() << date;
+        }
+        qDebug() << row;
+    }
 }

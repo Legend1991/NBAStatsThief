@@ -25,6 +25,7 @@ private:
     bool isDateRow(QString &row);
     bool isGameRow(QString &row);
     bool isValidPage(QString &page);
+    void parsePage(QString &page);
     QStringList tokenizeRow(QString &row);
     QDate parseDate(QString &row);
 
