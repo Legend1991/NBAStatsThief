@@ -15,9 +15,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     connect(ui->pbStartStealing, &QPushButton::clicked, this, &MainWindow::stealStats);
     setTimeRangeContent();
+
     connect(&m_Loader, &StatsLoader::loadStarted, this, &MainWindow::loadStarted);
     connect(&m_Loader, &StatsLoader::loadProgress, this, &MainWindow::loadProgress);
     connect(&m_Loader, &StatsLoader::loaded, this, &MainWindow::loadFinished);
+
+    connect(ui->cbToMonth, SIGNAL(currentIndexChanged(int)), this, SLOT(checkTimeRange()));
+    connect(ui->cbToYear, SIGNAL(currentIndexChanged(int)), this, SLOT(checkTimeRange()));
+    connect(ui->cbFromMonth, SIGNAL(currentIndexChanged(int)), this, SLOT(checkTimeRange()));
+    connect(ui->cbFromYear, SIGNAL(currentIndexChanged(int)), this, SLOT(checkTimeRange()));
 }
 
 MainWindow::~MainWindow()
@@ -27,12 +33,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::setTimeRangeContent()
 {
-    for (int i = START_YEAR; i <= QDate::currentDate().year(); ++i)
+    QDate currentDate = QDate::currentDate();
+
+    for (int i = START_YEAR; i <= currentDate.year(); ++i)
     {
         ui->cbFromYear->addItem(QString::number(i), i);
         ui->cbToYear->addItem(QString::number(i), i);
     }
-    ui->cbToYear->setCurrentIndex(ui->cbToYear->count() - 1);
+    ui->cbToYear->setCurrentIndex(currentDate.year() - START_YEAR);
 
     for (int i = JANUARY; i <= DECEMBER; ++i)
     {
@@ -42,7 +50,28 @@ void MainWindow::setTimeRangeContent()
         ui->cbToMonth->addItem(month, i);
     }
     ui->cbFromMonth->setCurrentIndex(9);
-    ui->cbToMonth->setCurrentIndex(5);
+    ui->cbToMonth->setCurrentIndex(currentDate.month() - 1);
+}
+
+void MainWindow::checkTimeRange()
+{
+    QDate currentDate = QDate::currentDate();
+    QDate fromDate = QDate(ui->cbFromYear->currentData().toInt(), ui->cbFromMonth->currentData().toInt(), 1);
+    QDate toDate = QDate(ui->cbToYear->currentData().toInt(), ui->cbToMonth->currentData().toInt(), 1);
+
+    if (toDate > currentDate)
+    {
+        toDate = currentDate;
+        ui->cbToYear->setCurrentIndex(toDate.year() - START_YEAR);
+        ui->cbToMonth->setCurrentIndex(toDate.month() - 1);
+    }
+
+    if (fromDate > toDate)
+    {
+        fromDate = toDate;
+        ui->cbFromYear->setCurrentIndex(fromDate.year() - START_YEAR);
+        ui->cbFromMonth->setCurrentIndex(fromDate.month() - 1);
+    }
 }
 
 void MainWindow::stealStats()
