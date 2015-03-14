@@ -17,12 +17,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-private slots:
-    void checkTimeRange();
-
 private:
     void stealStats();
-    void setTimeRangeContent();
     void loadStarted(QDate currDate);
     void loadProgress(int progress);
     void loadFinished();
