@@ -76,6 +76,7 @@ void MainWindow::checkTimeRange()
 
 void MainWindow::stealStats()
 {
+    ui->pbStartStealing->setEnabled(false);
     QDate fromDate = QDate(ui->cbFromYear->currentData().toInt(), ui->cbFromMonth->currentData().toInt(), 1);
     QDate toDate = QDate(ui->cbToYear->currentData().toInt(), ui->cbToMonth->currentData().toInt(), 1);
     m_Loader.setTimeRange(fromDate, toDate);
@@ -97,6 +98,7 @@ void MainWindow::loadProgress(int progress)
 
 void MainWindow::loadFinished()
 {
+    ui->pbStartStealing->setEnabled(true);
     ui->statusBar->showMessage("Stats load finished!");
 }
 

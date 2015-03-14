@@ -137,6 +137,7 @@ void StatsLoader::parsePage(QString &page)
         if (isDateRow(row))
         {
             date = parseDate(row);
+            qDebug() << date;
         }
         else if (isGameRow(row))
         {
