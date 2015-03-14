@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&m_Loader, &StatsLoader::loadStarted, this, &MainWindow::loadStarted);
     connect(&m_Loader, &StatsLoader::loadProgress, this, &MainWindow::loadProgress);
     connect(&m_Loader, &StatsLoader::loaded, this, &MainWindow::loadFinished);
+    connect(&m_Loader, &StatsLoader::noGames, this, &MainWindow::noGames);
 }
 
 MainWindow::~MainWindow()
@@ -46,6 +47,12 @@ void MainWindow::loadFinished()
 {
     ui->pbStartStealing->setEnabled(true);
     ui->statusBar->showMessage("Stats load finished!");
+}
+
+void MainWindow::noGames()
+{
+    ui->pbStartStealing->setEnabled(true);
+    ui->statusBar->showMessage("No games tomorrow!");
 }
 
 QString MainWindow::getDateString(QDate &date, QString format)

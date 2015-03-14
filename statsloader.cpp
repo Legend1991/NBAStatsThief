@@ -78,7 +78,13 @@ void StatsLoader::loadNextMonth()
     }
     else
     {
-        StatsEngine statsEngn(m_Games);
+        if (m_GamesForCalc.isEmpty())
+        {
+            emit noGames();
+            return;
+        }
+
+        StatsEngine statsEngn(m_Games, m_GamesForCalc);
         statsEngn.findScores();
         emit loaded();
     }
@@ -122,6 +128,16 @@ void StatsLoader::parsePage(QString &page)
 //            qDebug() << game.getDate()
 //                     << game.getHomeTeam() << game.getHomeScore()
 //                     << game.getVisitorScore() << game.getVisitorTeam();
+        }
+
+        if (!isDateRow(row) &&
+                m_GameDate == QDate::currentDate().addDays(1) &&
+                tokenizeRow(row).count() == 6)
+        {
+            QString homeTeam = tokenizeRow(row).value(4);
+            QString visitorTeam = tokenizeRow(row).value(2);
+            QPair<QString, QString> game = QPair<QString, QString>(homeTeam, visitorTeam);
+            m_GamesForCalc.append(game);
         }
     }
 }

@@ -19,6 +19,7 @@ signals:
     void loadStarted(QDate currDate);
     void loadProgress(int progress);
     void loaded();
+    void noGames();
 
 private:
     void loadCurrentMonth();
@@ -37,6 +38,7 @@ private:
     QDate m_CurrDate;
     QDate m_GameDate;
     QList<GameModel> m_Games;
+    QList<QPair<QString, QString> > m_GamesForCalc;
     QWebView *m_WebView;
 };
 

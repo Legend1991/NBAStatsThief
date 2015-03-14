@@ -3,9 +3,10 @@
 #include "QPair"
 #include <QDebug>
 
-StatsEngine::StatsEngine(QList<GameModel> game)
+StatsEngine::StatsEngine(QList<GameModel> game, QList<QPair<QString, QString> > gamesForCalc)
 {
     m_Games = game;
+    m_GamesForCalc = gamesForCalc;
 }
 
 StatsEngine::~StatsEngine()
@@ -15,17 +16,16 @@ StatsEngine::~StatsEngine()
 
 void StatsEngine::findScores()
 {
-    for (int index = 0; index < m_Games.count(); ++index)
+    foreach (Game findGame, m_GamesForCalc)
     {
-        GameModel findGame = m_Games.at(index);
         //    qDebug() << findGame.getDate()
         //             << findGame.getHomeTeam() << findGame.getHomeScore()
         //             << findGame.getVisitorScore() << findGame.getVisitorTeam();
 
         QList<GameModel> homeGS;
-        for (int i = index - 1, n = 0; i > 0 && n < 4; --i)
+        for (int i = m_Games.count() - 1, n = 0; i > 0 && n < 4; --i)
         {
-            if (m_Games.value(i).getHomeTeam() == findGame.getHomeTeam())
+            if (m_Games.value(i).getHomeTeam() == findGame.first)
             {
                 homeGS.append(m_Games.value(i));
                 //            qDebug() << m_Games.value(i).getDate()
@@ -33,7 +33,7 @@ void StatsEngine::findScores()
                 //                     << m_Games.value(i).getVisitorScore() << m_Games.value(i).getVisitorTeam();
                 n++;
             }
-            else if (m_Games.value(i).getVisitorTeam() == findGame.getHomeTeam())
+            else if (m_Games.value(i).getVisitorTeam() == findGame.first)
             {
                 homeGS.append(m_Games.value(i));
                 //            qDebug() << m_Games.value(i).getDate()
@@ -44,14 +44,14 @@ void StatsEngine::findScores()
         }
 
         QList<GameModel> visitorGS;
-        for (int i = index - 1, n = 0; i > 0 && n < 4; --i)
+        for (int i = m_Games.count() - 1, n = 0; i > 0 && n < 4; --i)
         {
-            if (m_Games.value(i).getHomeTeam() == findGame.getVisitorTeam())
+            if (m_Games.value(i).getHomeTeam() == findGame.second)
             {
                 visitorGS.append(m_Games.at(i));
                 n++;
             }
-            else if ((m_Games.value(i)).getVisitorTeam() == findGame.getVisitorTeam())
+            else if ((m_Games.value(i)).getVisitorTeam() == findGame.second)
             {
                 visitorGS.append(m_Games.at(i));
                 n++;
@@ -74,7 +74,7 @@ void StatsEngine::findScores()
         QPair<QList<int>, QList<int> > visitorS;
 
         foreach (GameModel game, homeGS) {
-            if (game.getHomeTeam() == findGame.getHomeTeam())
+            if (game.getHomeTeam() == findGame.first)
             {
                 //            homeT.first += game.getHomeScore();
                 //            homeT.second += game.getVisitorScore();
@@ -91,7 +91,7 @@ void StatsEngine::findScores()
         }
 
         foreach (GameModel game, visitorGS) {
-            if (game.getHomeTeam() == findGame.getVisitorTeam())
+            if (game.getHomeTeam() == findGame.second)
             {
                 //            visitorT.first += game.getHomeScore();
                 //            visitorT.second += game.getVisitorScore();
@@ -141,7 +141,7 @@ void StatsEngine::findScores()
 
         int homeTeamScore = qRound(homeT.first + visitorT.second - 100);
         int visitorTeamScore = qRound(visitorT.first + homeT.second - 100);
-        qDebug() << findGame.getHomeTeam() << homeTeamScore << findGame.getVisitorTeam() << visitorTeamScore;
+        qDebug() << findGame.first << homeTeamScore << findGame.second << visitorTeamScore;
     }
 }
 

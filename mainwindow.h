@@ -22,6 +22,7 @@ private:
     void loadStarted(QDate currDate);
     void loadProgress(int progress);
     void loadFinished();
+    void noGames();
     QString getDateString(QDate &date, QString format);
 
     Ui::MainWindow *ui;
