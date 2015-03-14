@@ -24,3 +24,6 @@ HEADERS  += mainwindow.h \
     statsengine.h
 
 FORMS    += mainwindow.ui
+
+RESOURCES += \
+    res.qrc
