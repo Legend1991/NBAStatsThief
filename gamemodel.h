@@ -7,6 +7,7 @@
 class GameModel
 {
 public:
+    GameModel();
     GameModel(QDate date, QString homeTeam, int homeScore,
               QString visitorTeam, int visitorScore);
     ~GameModel();

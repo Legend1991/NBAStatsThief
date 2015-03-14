@@ -1,5 +1,6 @@
 #include <QWebFrame>
 #include "statsloader.h"
+#include "statsengine.h"
 
 const int JULY = 7;
 const int AUGUST = 8;
@@ -77,6 +78,8 @@ void StatsLoader::loadNextMonth()
     }
     else
     {
+        StatsEngine statsEngn(m_Games);
+        statsEngn.findScores();
         emit loaded();
     }
 }
@@ -116,9 +119,9 @@ void StatsLoader::parsePage(QString &page)
         {
             GameModel game = parseGame(m_GameDate, row);
             m_Games.append(game);
-            qDebug() << game.getDate()
-                     << game.getHomeTeam() << game.getHomeScore()
-                     << game.getVisitorScore() << game.getVisitorTeam();
+//            qDebug() << game.getDate()
+//                     << game.getHomeTeam() << game.getHomeScore()
+//                     << game.getVisitorScore() << game.getVisitorTeam();
         }
     }
 }
