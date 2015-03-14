@@ -18,6 +18,7 @@ public:
 signals:
     void loadStarted(QDate currDate);
     void loadProgress(int progress);
+    void loaded();
 
 private:
     void loadCurrentMonth();

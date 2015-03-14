@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setTimeRangeContent();
     connect(&m_Loader, &StatsLoader::loadStarted, this, &MainWindow::loadStarted);
     connect(&m_Loader, &StatsLoader::loadProgress, this, &MainWindow::loadProgress);
+    connect(&m_Loader, &StatsLoader::loaded, this, &MainWindow::loadFinished);
 }
 
 MainWindow::~MainWindow()
@@ -63,6 +64,11 @@ void MainWindow::loadProgress(int progress)
 {
     QString status = QString("Load stats for %1 (%2%)").arg(getDateString(m_CurrDate, "MMMM yyyy")).arg(progress);
     ui->statusBar->showMessage(status);
+}
+
+void MainWindow::loadFinished()
+{
+    ui->statusBar->showMessage("Stats load finished!");
 }
 
 QString MainWindow::getDateString(QDate &date, QString format)

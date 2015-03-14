@@ -74,6 +74,10 @@ void StatsLoader::loadNextMonth()
     {
         loadCurrentMonth();
     }
+    else
+    {
+        emit loaded();
+    }
 }
 
 bool StatsLoader::isDateRow(QString &row)

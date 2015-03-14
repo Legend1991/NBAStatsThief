@@ -22,6 +22,7 @@ private:
     void setTimeRangeContent();
     void loadStarted(QDate currDate);
     void loadProgress(int progress);
+    void loadFinished();
     QString getDateString(QDate &date, QString format);
 
     Ui::MainWindow *ui;
