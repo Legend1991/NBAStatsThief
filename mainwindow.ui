@@ -10,6 +10,12 @@
     <height>192</height>
    </rect>
   </property>
+  <property name="maximumSize">
+   <size>
+    <width>361</width>
+    <height>192</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>NBA Stats Thief</string>
   </property>
