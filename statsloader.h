@@ -36,6 +36,7 @@ private:
     QDate m_ToDate;
     QDate m_CurrDate;
     QDate m_GameDate;
+    QList<GameModel> m_Games;
     QWebView *m_WebView;
 };
 

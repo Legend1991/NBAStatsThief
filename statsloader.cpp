@@ -81,18 +81,6 @@ void StatsLoader::loadNextMonth()
     }
 }
 
-bool StatsLoader::isDateRow(QString &row)
-{
-    QStringList splitedRow = tokenizeRow(row);
-    return splitedRow.count() == 3 && QRegExp(".*\\d$").exactMatch(row);
-}
-
-bool StatsLoader::isGameRow(QString &row)
-{
-    QStringList splitedRow = tokenizeRow(row);
-    return splitedRow.count() == 8;
-}
-
 bool StatsLoader::isValidPage(QString &page)
 {
     if (page.isEmpty())
@@ -113,25 +101,11 @@ bool StatsLoader::isValidPage(QString &page)
     return false;
 }
 
-QStringList StatsLoader::tokenizeRow(QString &row)
-{
-    return row.trimmed().split(QRegExp("\\s+|\\t+"));
-}
-
 void StatsLoader::parsePage(QString &page)
 {
     QStringList rows = page.split("\n");
-    QStringList validRows;
 
     foreach (QString row, rows)
-    {
-        if (isGameRow(row) || isDateRow(row))
-        {
-            validRows.append(row);
-        }
-    }
-
-    foreach (QString row, validRows)
     {
         if (isDateRow(row))
         {
@@ -141,6 +115,7 @@ void StatsLoader::parsePage(QString &page)
         if (isGameRow(row))
         {
             GameModel game = parseGame(m_GameDate, row);
+            m_Games.append(game);
             qDebug() << game.getDate()
                      << game.getHomeTeam() << game.getHomeScore()
                      << game.getVisitorScore() << game.getVisitorTeam();
@@ -165,4 +140,21 @@ GameModel StatsLoader::parseGame(QDate date, QString &row)
     int homeScore = gameTokens.at(7).toInt();
 
     return GameModel(date, homeTeam, homeScore, visitorTeam, visitorScore);
+}
+
+bool StatsLoader::isDateRow(QString &row)
+{
+    QStringList splitedRow = tokenizeRow(row);
+    return splitedRow.count() == 3 && QRegExp(".*\\d$").exactMatch(row);
+}
+
+bool StatsLoader::isGameRow(QString &row)
+{
+    QStringList splitedRow = tokenizeRow(row);
+    return splitedRow.count() == 8;
+}
+
+QStringList StatsLoader::tokenizeRow(QString &row)
+{
+    return row.trimmed().split(QRegExp("\\s+|\\t+"));
 }
