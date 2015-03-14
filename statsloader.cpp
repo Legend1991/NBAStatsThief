@@ -29,8 +29,8 @@ void StatsLoader::load()
 void StatsLoader::setTimeRange(QDate fromDate, QDate toDate)
 {
     QDate currentDate = QDate::currentDate();
-    m_FromDate = fromDate > currentDate ? currentDate : fromDate;
     m_ToDate = toDate > currentDate ? currentDate : toDate;
+    m_FromDate = fromDate > m_ToDate ? m_ToDate : fromDate;
 }
 
 void StatsLoader::loadCurrentMonth()
