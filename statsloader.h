@@ -35,6 +35,7 @@ private:
     QDate m_FromDate;
     QDate m_ToDate;
     QDate m_CurrDate;
+    QDate m_GameDate;
     QWebView *m_WebView;
 };
 

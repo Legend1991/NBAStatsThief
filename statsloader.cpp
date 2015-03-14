@@ -8,7 +8,8 @@ const int SEPTEMBER = 9;
 StatsLoader::StatsLoader(QObject *parent) :
     QObject(parent),
     m_FromDate(),
-    m_ToDate()
+    m_ToDate(),
+    m_GameDate()
 {
     m_WebView = new QWebView();
     connect(m_WebView, &QWebView::loadProgress, this, &StatsLoader::loadProgress);
@@ -132,18 +133,18 @@ void StatsLoader::parsePage(QString &page)
 
     foreach (QString row, validRows)
     {
-        QDate date;
-
         if (isDateRow(row))
         {
-            date = parseDate(row);
-            qDebug() << date;
+            m_GameDate = parseDate(row);
         }
-        else if (isGameRow(row))
+
+        if (isGameRow(row))
         {
-//            GameModel game = parseGame(date, row);
+            GameModel game = parseGame(m_GameDate, row);
+            qDebug() << game.getDate()
+                     << game.getHomeTeam() << game.getHomeScore()
+                     << game.getVisitorScore() << game.getVisitorTeam();
         }
-        qDebug() << row;
     }
 }
 
@@ -155,7 +156,13 @@ QDate StatsLoader::parseDate(QString &row)
     return locale.toDate(strDate, "yyyyMMMdd");
 }
 
-GameModel parseGame(QDate date, QString &row)
+GameModel StatsLoader::parseGame(QDate date, QString &row)
 {
+    QStringList gameTokens = tokenizeRow(row);
+    QString visitorTeam = gameTokens.at(2);
+    QString homeTeam = gameTokens.at(4);
+    int visitorScore = gameTokens.at(5).toInt();
+    int homeScore = gameTokens.at(7).toInt();
 
+    return GameModel(date, homeTeam, homeScore, visitorTeam, visitorScore);
 }
