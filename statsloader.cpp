@@ -51,11 +51,13 @@ void StatsLoader::loadCurrentMonth()
 
 void StatsLoader::loadFinished(bool ok)
 {
+    if (!ok) return;
+
     QString page = m_WebView->page()->mainFrame()->toPlainText();
 
-    if (!ok || !isValidPage(page))
+    if (!isValidPage(page))
     {
-        m_WebView->load(m_WebView->url());
+        m_WebView->triggerPageAction(QWebPage::ReloadAndBypassCache);
         return;
     }
 
@@ -134,7 +136,7 @@ void StatsLoader::parsePage(QString &page)
         }
         else if (isGameRow(row))
         {
-            GameModel game = parseGame(date, row);
+//            GameModel game = parseGame(date, row);
         }
         qDebug() << row;
     }
