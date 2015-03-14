@@ -14,8 +14,10 @@ StatsEngine::~StatsEngine()
 
 }
 
-void StatsEngine::findScores()
+QList<GameModel> StatsEngine::findScores(int avLeagScore)
 {
+    QList<GameModel> res;
+
     foreach (Game findGame, m_GamesForCalc)
     {
         //    qDebug() << findGame.getDate()
@@ -139,9 +141,12 @@ void StatsEngine::findScores()
         visitorT.first = visitorT.first / 2;
         visitorT.second = visitorT.second / 2;
 
-        int homeTeamScore = qRound(homeT.first + visitorT.second - 100);
-        int visitorTeamScore = qRound(visitorT.first + homeT.second - 100);
+        int homeTeamScore = qRound(homeT.first + visitorT.second - avLeagScore);
+        int visitorTeamScore = qRound(visitorT.first + homeT.second - avLeagScore);
         qDebug() << findGame.first << homeTeamScore << findGame.second << visitorTeamScore;
+        res.append(GameModel(QDate::currentDate().addDays(1), findGame.first, homeTeamScore, findGame.second, visitorTeamScore));
     }
+
+    return res;
 }
 

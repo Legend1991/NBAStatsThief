@@ -12,7 +12,7 @@ class StatsLoader : public QObject
 public:
     explicit StatsLoader(QObject *parent = 0);
     ~StatsLoader();
-    void load();
+    void load(int avLeagScore);
     void setTimeRange(QDate fromDate, QDate toDate);
 
 signals:
@@ -39,6 +39,7 @@ private:
     QDate m_GameDate;
     QList<GameModel> m_Games;
     QList<QPair<QString, QString> > m_GamesForCalc;
+    int m_AvLeagScore;
     QWebView *m_WebView;
 };
 

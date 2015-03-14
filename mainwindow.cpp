@@ -24,10 +24,11 @@ MainWindow::~MainWindow()
 void MainWindow::stealStats()
 {
     ui->pbStartStealing->setEnabled(false);
+    ui->sbAvLeagScore->setEnabled(false);
     QDate fromDate = QDate::currentDate().addMonths(-1);
     QDate toDate = QDate::currentDate();
     m_Loader.setTimeRange(fromDate, toDate);
-    m_Loader.load();
+    m_Loader.load(ui->sbAvLeagScore->value());
 }
 
 void MainWindow::loadStarted(QDate currDate)
@@ -46,12 +47,14 @@ void MainWindow::loadProgress(int progress)
 void MainWindow::loadFinished()
 {
     ui->pbStartStealing->setEnabled(true);
+    ui->sbAvLeagScore->setEnabled(true);
     ui->statusBar->showMessage("Stats load finished!");
 }
 
 void MainWindow::noGames()
 {
     ui->pbStartStealing->setEnabled(true);
+    ui->sbAvLeagScore->setEnabled(true);
     ui->statusBar->showMessage("No games tomorrow!");
 }
 

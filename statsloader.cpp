@@ -22,9 +22,10 @@ StatsLoader::~StatsLoader()
     delete m_WebView;
 }
 
-void StatsLoader::load()
+void StatsLoader::load(int avLeagScore)
 {
     m_CurrDate = m_FromDate;
+    m_AvLeagScore = avLeagScore;
     loadCurrentMonth();
 }
 
@@ -85,7 +86,7 @@ void StatsLoader::loadNextMonth()
         }
 
         StatsEngine statsEngn(m_Games, m_GamesForCalc);
-        statsEngn.findScores();
+        statsEngn.findScores(m_AvLeagScore);
         emit loaded();
     }
 }

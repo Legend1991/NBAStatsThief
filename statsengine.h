@@ -11,7 +11,7 @@ class StatsEngine
 public:
     StatsEngine(QList<GameModel> game, QList<QPair<QString, QString> > gamesForCalc);
     ~StatsEngine();
-    void findScores();
+    QList<GameModel> findScores(int avLeagScore);
 
 private:
     QList<GameModel> m_Games;
