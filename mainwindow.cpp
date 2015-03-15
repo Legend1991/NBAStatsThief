@@ -1,6 +1,9 @@
 #include <QDebug>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QStandardPaths>
+#include <QDir>
+#include <QFileInfo>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -14,12 +17,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&m_Loader, &StatsLoader::loadProgress, this, &MainWindow::loadProgress);
     connect(&m_Loader, &StatsLoader::loaded, this, &MainWindow::loadFinished);
     connect(&m_Loader, &StatsLoader::noGames, this, &MainWindow::noGames);
-    QStringList headers;
-    headers.append("Home Team");
-    headers.append("Home Score");
-    headers.append("Visitor Score");
-    headers.append("Visitor Team");
-    ui->twCalculation->setVerticalHeaderLabels(headers);
+    QString fileName = QDate::currentDate().addDays(1).toString("nba-forecast-yyyy-MM-dd.txt");
+    QString location = QStandardPaths::locate(QStandardPaths::DesktopLocation, NULL, QStandardPaths::LocateDirectory);
+    ui->leOutputDB->setText(location + fileName);
+    connect(ui->pbBrowse, &QPushButton::clicked, this, &MainWindow::browse);
 }
 
 MainWindow::~MainWindow()
@@ -54,11 +55,12 @@ void MainWindow::loadProgress(int progress)
 
 void MainWindow::loadFinished(QList<GameModel> games)
 {
+    setTable(games);
+    writeForecast(games);
     ui->pbStartStealing->setEnabled(true);
     ui->sbAvLeagScore->setEnabled(true);
     ui->leOutputDB->setEnabled(true);
     ui->pbBrowse->setEnabled(true);
-    setTable(games);
     ui->statusBar->showMessage("Stats load finished!");
 }
 
@@ -97,4 +99,32 @@ QString MainWindow::getDateString(QDate &date, QString format)
 {
     QLocale locale(QLocale::English, QLocale::UnitedStates);
     return locale.toString(date, format);
+}
+
+void MainWindow::browse()
+{
+
+}
+
+void MainWindow::writeForecast(QList<GameModel> games)
+{
+    QFileInfo fileInfo(ui->leOutputDB->text());
+    QDir dir(fileInfo.absoluteDir());
+
+    if (!dir.exists())
+    {
+        browse();
+    }
+
+    QFile file(fileInfo.absoluteFilePath());
+    if (file.open(QFile::ReadWrite | QFile::Truncate | QFile::Text))
+    {
+        foreach (GameModel game, games)
+        {
+            QString row = QString("%1\t%2\t%3\t%4\n").arg(game.getHomeTeam()).arg(game.getHomeScore())
+                    .arg(game.getVisitorScore()).arg(game.getVisitorTeam());
+            file.write(row.toLatin1());
+        }
+        file.close();
+    }
 }

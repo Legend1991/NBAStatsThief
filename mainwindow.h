@@ -23,8 +23,10 @@ private:
     void loadProgress(int progress);
     void loadFinished(QList<GameModel> games);
     void noGames();
+    void browse();
     QString getDateString(QDate &date, QString format);
     void setTable(QList<GameModel> games);
+    void writeForecast(QList<GameModel> games);
 
     Ui::MainWindow *ui;
     StatsLoader m_Loader;
