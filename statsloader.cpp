@@ -86,8 +86,8 @@ void StatsLoader::loadNextMonth()
         }
 
         StatsEngine statsEngn(m_Games, m_GamesForCalc);
-        statsEngn.findScores(m_AvLeagScore);
-        emit loaded();
+        QList<GameModel> games = statsEngn.findScores(m_AvLeagScore);
+        emit loaded(games);
     }
 }
 
@@ -132,7 +132,7 @@ void StatsLoader::parsePage(QString &page)
         }
 
         if (!isDateRow(row) &&
-                m_GameDate == QDate::currentDate().addDays(1) &&
+                m_GameDate == QDate::currentDate().addDays(2) &&
                 tokenizeRow(row).count() == 6)
         {
             QString homeTeam = tokenizeRow(row).value(4);

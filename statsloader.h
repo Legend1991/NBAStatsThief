@@ -18,7 +18,7 @@ public:
 signals:
     void loadStarted(QDate currDate);
     void loadProgress(int progress);
-    void loaded();
+    void loaded(QList<GameModel> games);
     void noGames();
 
 private:

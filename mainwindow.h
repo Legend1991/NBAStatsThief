@@ -21,9 +21,10 @@ private:
     void stealStats();
     void loadStarted(QDate currDate);
     void loadProgress(int progress);
-    void loadFinished();
+    void loadFinished(QList<GameModel> games);
     void noGames();
     QString getDateString(QDate &date, QString format);
+    void setTable(QList<GameModel> games);
 
     Ui::MainWindow *ui;
     StatsLoader m_Loader;

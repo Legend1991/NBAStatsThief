@@ -10,10 +10,16 @@
     <height>350</height>
    </rect>
   </property>
-  <property name="maximumSize">
+  <property name="minimumSize">
    <size>
     <width>350</width>
     <height>350</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>350</width>
+    <height>600</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -101,7 +107,58 @@
      </layout>
     </item>
     <item>
-     <widget class="QTableView" name="tvCalculation"/>
+     <widget class="QTableWidget" name="twCalculation">
+      <property name="selectionBehavior">
+       <enum>QAbstractItemView::SelectRows</enum>
+      </property>
+      <property name="gridStyle">
+       <enum>Qt::NoPen</enum>
+      </property>
+      <property name="columnCount">
+       <number>4</number>
+      </property>
+      <attribute name="horizontalHeaderCascadingSectionResizes">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="horizontalHeaderDefaultSectionSize">
+       <number>75</number>
+      </attribute>
+      <attribute name="horizontalHeaderHighlightSections">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="horizontalHeaderMinimumSectionSize">
+       <number>50</number>
+      </attribute>
+      <attribute name="horizontalHeaderStretchLastSection">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="verticalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="verticalHeaderDefaultSectionSize">
+       <number>19</number>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>Home Team</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Home Score</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Visitor Score</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Visitor Team</string>
+       </property>
+      </column>
+     </widget>
     </item>
    </layout>
   </widget>
