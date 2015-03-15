@@ -132,7 +132,7 @@ void StatsLoader::parsePage(QString &page)
         }
 
         if (!isDateRow(row) &&
-                m_GameDate == QDate::currentDate().addDays(2) &&
+                m_GameDate == QDate::currentDate().addDays(1) &&
                 tokenizeRow(row).count() == 6)
         {
             QString homeTeam = tokenizeRow(row).value(4);

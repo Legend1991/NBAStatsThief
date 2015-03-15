@@ -4,6 +4,7 @@
 #include <QStandardPaths>
 #include <QDir>
 #include <QFileInfo>
+#include <QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -103,7 +104,8 @@ QString MainWindow::getDateString(QDate &date, QString format)
 
 void MainWindow::browse()
 {
-
+    QString fileLocation = QFileDialog::getSaveFileName(this, "Save Stats To File", ui->leOutputDB->text(), "Text files (*.txt)");
+    ui->leOutputDB->setText(fileLocation);
 }
 
 void MainWindow::writeForecast(QList<GameModel> games)
@@ -116,7 +118,13 @@ void MainWindow::writeForecast(QList<GameModel> games)
         browse();
     }
 
-    QFile file(fileInfo.absoluteFilePath());
+    QString fileName = fileInfo.absoluteFilePath();
+    if(fileInfo.suffix() != "txt")
+    {
+        fileName += ".txt";
+    }
+
+    QFile file(fileName);
     if (file.open(QFile::ReadWrite | QFile::Truncate | QFile::Text))
     {
         foreach (GameModel game, games)
