@@ -1,5 +1,6 @@
 #include <QWebFrame>
 #include "statsloader.h"
+#include "pageparser.h"
 
 const int JULY = 7;
 const int AUGUST = 8;
@@ -8,8 +9,7 @@ const int SEPTEMBER = 9;
 StatsLoader::StatsLoader(QObject *parent) :
     QObject(parent),
     m_FromDate(),
-    m_ToDate(),
-    m_GameDate()
+    m_ToDate()
 {
     m_WebView = new QWebView();
     connect(m_WebView, &QWebView::loadProgress, this, &StatsLoader::loadProgress);
@@ -55,14 +55,15 @@ void StatsLoader::loadFinished(bool ok)
     if (!ok) return;
 
     QString page = m_WebView->page()->mainFrame()->toPlainText();
+    PageParser parser(page, m_CurrDate);
 
-    if (!isValidPage(page))
+    if (!parser.isPageValid())
     {
         m_WebView->triggerPageAction(QWebPage::ReloadAndBypassCache);
         return;
     }
 
-    parsePage(page);
+    parser.parsePage();
 
     loadNextMonth();
 }
@@ -79,82 +80,4 @@ void StatsLoader::loadNextMonth()
     {
         emit loaded();
     }
-}
-
-bool StatsLoader::isValidPage(QString &page)
-{
-    if (page.isEmpty())
-    {
-        return false;
-    }
-
-    QStringList rows = page.split("\n");
-
-    foreach (QString row, rows)
-    {
-        if (isGameRow(row) || isDateRow(row))
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-void StatsLoader::parsePage(QString &page)
-{
-    QStringList rows = page.split("\n");
-
-    foreach (QString row, rows)
-    {
-        if (isDateRow(row))
-        {
-            m_GameDate = parseDate(row);
-        }
-
-        if (isGameRow(row))
-        {
-            GameModel game = parseGame(m_GameDate, row);
-            m_Games.append(game);
-            qDebug() << game.getDate()
-                     << game.getHomeTeam() << game.getHomeScore()
-                     << game.getVisitorScore() << game.getVisitorTeam();
-        }
-    }
-}
-
-QDate StatsLoader::parseDate(QString &row)
-{
-    QStringList dateTokens = tokenizeRow(row);
-    QLocale locale(QLocale::English, QLocale::UnitedStates);
-    QString strDate = QString("%1%2%3").arg(m_CurrDate.year()).arg(dateTokens.at(1)).arg(dateTokens.at(2));
-    return locale.toDate(strDate, "yyyyMMMdd");
-}
-
-GameModel StatsLoader::parseGame(QDate date, QString &row)
-{
-    QStringList gameTokens = tokenizeRow(row);
-    QString visitorTeam = gameTokens.at(2);
-    QString homeTeam = gameTokens.at(4);
-    int visitorScore = gameTokens.at(5).toInt();
-    int homeScore = gameTokens.at(7).toInt();
-
-    return GameModel(date, homeTeam, homeScore, visitorTeam, visitorScore);
-}
-
-bool StatsLoader::isDateRow(QString &row)
-{
-    QStringList splitedRow = tokenizeRow(row);
-    return splitedRow.count() == 3 && QRegExp(".*\\d$").exactMatch(row);
-}
-
-bool StatsLoader::isGameRow(QString &row)
-{
-    QStringList splitedRow = tokenizeRow(row);
-    return splitedRow.count() == 8;
-}
-
-QStringList StatsLoader::tokenizeRow(QString &row)
-{
-    return row.trimmed().split(QRegExp("\\s+|\\t+"));
 }

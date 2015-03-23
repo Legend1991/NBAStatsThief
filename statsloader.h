@@ -24,19 +24,10 @@ private:
     void loadCurrentMonth();
     void loadNextMonth();
     void loadFinished(bool ok);
-    bool isDateRow(QString &row);
-    bool isGameRow(QString &row);
-    bool isValidPage(QString &page);
-    void parsePage(QString &page);
-    QStringList tokenizeRow(QString &row);
-    QDate parseDate(QString &row);
-    GameModel parseGame(QDate date, QString &row);
 
     QDate m_FromDate;
     QDate m_ToDate;
     QDate m_CurrDate;
-    QDate m_GameDate;
-    QList<GameModel> m_Games;
     QWebView *m_WebView;
 };
 
