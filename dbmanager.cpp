@@ -1,3 +1,5 @@
+#include <QSqlQuery>
+#include <QDebug>
 #include "dbmanager.h"
 
 DBManager *DBManager::pInst = 0;
@@ -20,10 +22,26 @@ DBManager::~DBManager()
 
 }
 
-void DBManager::setDatabaseName(QString name)
+void DBManager::setPath(QString name)
 {
+    m_DB.close();
     m_DB.setDatabaseName(name);
-    if (!m_DB.open()) {
+    if (!m_DB.open())
+    {
         qDebug() << "Can't open database: " << name;
+    }
+}
+
+void DBManager::add(QList<GameModel> games)
+{
+    QSqlQuery query(m_DB);
+
+    foreach (GameModel game, games)
+    {
+        QString strQuery = "";
+        if (!query.exec(strQuery))
+        {
+            qDebug() << "Can't exec query: " << strQuery;
+        }
     }
 }

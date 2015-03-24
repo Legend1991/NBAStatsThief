@@ -2,12 +2,15 @@
 #define DBMANAGER_H
 
 #include <QSqlDatabase>
+#include <QList>
+#include "gamemodel.h"
 
 class DBManager
 {
 public:
     static DBManager *inst();
-    void setDatabaseName(QString name);
+    void setPath(QString name);
+    void add(QList<GameModel> games);
 
 private:
     DBManager();

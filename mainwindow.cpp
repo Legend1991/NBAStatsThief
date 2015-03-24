@@ -1,6 +1,7 @@
 #include <QDebug>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "dbmanager.h"
 
 const int JANUARY = 1;
 const int DECEMBER = 12;
@@ -77,6 +78,7 @@ void MainWindow::checkTimeRange()
 void MainWindow::stealStats()
 {
     ui->pbStartStealing->setEnabled(false);
+    DBManager::inst()->setPath(ui->leOutputDB->text());
     QDate fromDate = QDate(ui->cbFromYear->currentData().toInt(), ui->cbFromMonth->currentData().toInt(), 1);
     QDate toDate = QDate(ui->cbToYear->currentData().toInt(), ui->cbToMonth->currentData().toInt(), 1);
     m_Loader.setTimeRange(fromDate, toDate);

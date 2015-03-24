@@ -18,6 +18,7 @@ void PageParser::validate()
         if (isGameRow(row) || isDateRow(row))
         {
             m_IsPageValid = true;
+            return;
         }
     }
 }

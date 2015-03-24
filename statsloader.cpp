@@ -1,6 +1,7 @@
 #include <QWebFrame>
 #include "statsloader.h"
 #include "pageparser.h"
+#include "dbmanager.h"
 
 const int JULY = 7;
 const int AUGUST = 8;
@@ -64,7 +65,7 @@ void StatsLoader::loadFinished(bool ok)
     }
 
     QList<GameModel> games = parser.parsePage();
-
+    DBManager::inst()->add(games);
     loadNextMonth();
 }
 
