@@ -22,8 +22,10 @@ void PageParser::validate()
     }
 }
 
-void PageParser::parsePage()
+QList<GameModel> PageParser::parsePage()
 {
+    QList<GameModel> games;
+
     QStringList rows = m_Page.split("\n");
 
     foreach (QString row, rows)
@@ -36,12 +38,14 @@ void PageParser::parsePage()
         if (isGameRow(row))
         {
             GameModel game = parseGame(m_GameDate, row);
-            m_Games.append(game);
+            games.append(game);
             qDebug() << game.getDate()
                      << game.getHomeTeam() << game.getHomeScore()
                      << game.getVisitorScore() << game.getVisitorTeam();
         }
     }
+
+    return games;
 }
 
 QDate PageParser::parseDate(QString &row)

@@ -63,7 +63,7 @@ void StatsLoader::loadFinished(bool ok)
         return;
     }
 
-    parser.parsePage();
+    QList<GameModel> games = parser.parsePage();
 
     loadNextMonth();
 }

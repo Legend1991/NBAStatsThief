@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network webkit webkitwidgets
+QT       += core gui network webkit webkitwidgets sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -16,11 +16,13 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     statsloader.cpp \
     gamemodel.cpp \
-    pageparser.cpp
+    pageparser.cpp \
+    dbmanager.cpp
 
 HEADERS  += mainwindow.h \
     statsloader.h \
     gamemodel.h \
-    pageparser.h
+    pageparser.h \
+    dbmanager.h
 
 FORMS    += mainwindow.ui

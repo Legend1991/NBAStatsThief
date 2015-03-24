@@ -10,7 +10,7 @@ class PageParser
 public:
     PageParser(QString page, QDate currDate);
     bool isPageValid() { return m_IsPageValid; }
-    void parsePage();
+    QList<GameModel> parsePage();
 
 private:
     void validate();
@@ -23,7 +23,6 @@ private:
     QString m_Page;
     bool m_IsPageValid;
     QDate m_GameDate;
-    QList<GameModel> m_Games;
 };
 
 #endif // PAGEPARSER_H
