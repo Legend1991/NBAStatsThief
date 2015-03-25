@@ -38,7 +38,13 @@ void DBManager::add(QList<GameModel> games)
 
     foreach (GameModel game, games)
     {
-        QString strQuery = "";
+        QString strQuery = QString("INSERT INTO Games"
+                                   "(Date, HomeTeam, HomeScore, VisitorTeam, VisitorScore)"
+                                   "VALUES (%1, '%2', %3, '%4', %5);")
+                                .arg(game.getDate().toString("dd.MM.yyyy"))
+                                .arg(game.getHomeTeam()).arg(game.getHomeScore())
+                                .arg(game.getVisitorTeam()).arg(game.getVisitorScore());
+
         if (!query.exec(strQuery))
         {
             qDebug() << "Can't exec query: " << strQuery;
