@@ -26,3 +26,6 @@ HEADERS  += mainwindow.h \
     dbmanager.h
 
 FORMS    += mainwindow.ui
+
+RESOURCES += \
+    resources.qrc
