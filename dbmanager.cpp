@@ -1,5 +1,6 @@
 #include <QSqlQuery>
 #include <QDebug>
+#include <QFile>
 #include "dbmanager.h"
 
 DBManager *DBManager::pInst = 0;
@@ -24,6 +25,10 @@ DBManager::~DBManager()
 
 void DBManager::setPath(QString name)
 {
+    if (!QFile::copy(":/NBADB.sqlite", name))
+    {
+        qDebug() << "Can't create database: " << name;
+    }
     m_DB.close();
     m_DB.setDatabaseName(name);
     if (!m_DB.open())
@@ -38,12 +43,15 @@ void DBManager::add(QList<GameModel> games)
 
     foreach (GameModel game, games)
     {
-        QString strQuery = QString("INSERT INTO Games"
-                                   "(Date, HomeTeam, HomeScore, VisitorTeam, VisitorScore)"
-                                   "VALUES (%1, '%2', %3, '%4', %5);")
+        QString strQuery = QString("INSERT INTO Games (Date, HomeTeam, HomeScore, VisitorTeam, VisitorScore) "
+                                   "SELECT '%1', HomeTeam, %3, VisitorTeam, %5 "
+                                   "FROM (SELECT Teams.TeamID FROM Teams WHERE Teams.Name = '%2') AS HomeTeam, "
+                                   "     (SELECT Teams.TeamID FROM Teams WHERE Teams.Name = '%4') AS VisitorTeam;")
                                 .arg(game.getDate().toString("dd.MM.yyyy"))
-                                .arg(game.getHomeTeam()).arg(game.getHomeScore())
-                                .arg(game.getVisitorTeam()).arg(game.getVisitorScore());
+                                .arg(game.getHomeTeam())
+                                .arg(game.getHomeScore())
+                                .arg(game.getVisitorTeam())
+                                .arg(game.getVisitorScore());
 
         if (!query.exec(strQuery))
         {
