@@ -1,3 +1,7 @@
+#include <QStandardPaths>
+#include <QDir>
+#include <QFileInfo>
+#include <QFileDialog>
 #include <QDebug>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -25,6 +29,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->cbToYear, SIGNAL(currentIndexChanged(int)), this, SLOT(checkTimeRange()));
     connect(ui->cbFromMonth, SIGNAL(currentIndexChanged(int)), this, SLOT(checkTimeRange()));
     connect(ui->cbFromYear, SIGNAL(currentIndexChanged(int)), this, SLOT(checkTimeRange()));
+
+    QString fileName = QDate::currentDate().addDays(1).toString("nbastats.sqlite");
+    QString location = QStandardPaths::locate(QStandardPaths::DesktopLocation, NULL, QStandardPaths::LocateDirectory);
+    ui->leOutputDB->setText(location + fileName);
+    connect(ui->pbBrowse, &QPushButton::clicked, this, &MainWindow::browse);
 }
 
 MainWindow::~MainWindow()
@@ -102,6 +111,27 @@ void MainWindow::loadFinished()
 {
     ui->pbStartStealing->setEnabled(true);
     ui->statusBar->showMessage("Stats load finished!");
+}
+
+void MainWindow::browse()
+{
+    QString fileLocation = QFileDialog::getSaveFileName(this, "Save Stats To File", ui->leOutputDB->text(), "SQLite DB files (*.sqlite)");
+
+    QFileInfo fileInfo(fileLocation);
+    QDir dir(fileInfo.absoluteDir());
+
+    if (!dir.exists())
+    {
+        browse();
+    }
+
+    QString fileName = fileInfo.absoluteFilePath();
+    if(fileInfo.suffix() != "sqlite")
+    {
+        fileName += ".sqlite";
+    }
+
+    ui->leOutputDB->setText(fileName);
 }
 
 QString MainWindow::getDateString(QDate &date, QString format)

@@ -1,4 +1,5 @@
 #include <QSqlQuery>
+#include <QSqlError>
 #include <QDebug>
 #include <QFile>
 #include "dbmanager.h"
@@ -25,10 +26,12 @@ DBManager::~DBManager()
 
 void DBManager::setPath(QString name)
 {
-    if (!QFile::copy(":/NBADB.sqlite", name))
+    if (!QFile::copy(":/nbadb.sqlite", name))
     {
         qDebug() << "Can't create database: " << name;
     }
+    QFile dbfile(name);
+    dbfile.setPermissions(QFile::WriteUser);
     m_DB.close();
     m_DB.setDatabaseName(name);
     if (!m_DB.open())
@@ -44,9 +47,9 @@ void DBManager::add(QList<GameModel> games)
     foreach (GameModel game, games)
     {
         QString strQuery = QString("INSERT INTO Games (Date, HomeTeam, HomeScore, VisitorTeam, VisitorScore) "
-                                   "SELECT '%1', HomeTeam, %3, VisitorTeam, %5 "
-                                   "FROM (SELECT Teams.TeamID FROM Teams WHERE Teams.Name = '%2') AS HomeTeam, "
-                                   "     (SELECT Teams.TeamID FROM Teams WHERE Teams.Name = '%4') AS VisitorTeam;")
+                                   "SELECT \"%1\", HomeTeam.Id, %3, VisitorTeam.Id, %5 "
+                                   "FROM (SELECT Teams.Id FROM Teams WHERE Teams.ShortName = \"%2\") AS HomeTeam, "
+                                   "     (SELECT Teams.Id FROM Teams WHERE Teams.ShortName = \"%4\") AS VisitorTeam;")
                                 .arg(game.getDate().toString("dd.MM.yyyy"))
                                 .arg(game.getHomeTeam())
                                 .arg(game.getHomeScore())
@@ -55,7 +58,7 @@ void DBManager::add(QList<GameModel> games)
 
         if (!query.exec(strQuery))
         {
-            qDebug() << "Can't exec query: " << strQuery;
+            qDebug() << "Can't exec query: " << strQuery << "\tError: " << query.lastError().text();
         }
     }
 }
