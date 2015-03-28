@@ -50,7 +50,7 @@ void DBManager::add(QList<GameModel> games)
                                    "SELECT \"%1\", HomeTeam.Id, %3, VisitorTeam.Id, %5 "
                                    "FROM (SELECT Teams.Id FROM Teams WHERE Teams.ShortName = \"%2\") AS HomeTeam, "
                                    "     (SELECT Teams.Id FROM Teams WHERE Teams.ShortName = \"%4\") AS VisitorTeam;")
-                                .arg(game.getDate().toString("dd.MM.yyyy"))
+                                .arg(game.getDate().toString("yyyyMMdd").toInt())
                                 .arg(game.getHomeTeam())
                                 .arg(game.getHomeScore())
                                 .arg(game.getVisitorTeam())
