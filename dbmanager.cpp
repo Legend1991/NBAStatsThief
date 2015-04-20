@@ -31,7 +31,7 @@ void DBManager::setPath(QString name)
         qDebug() << "Can't create database: " << name;
     }
     QFile dbfile(name);
-    dbfile.setPermissions(QFile::WriteUser);
+    dbfile.setPermissions(QFile::ReadOwner | QFile::WriteOwner | QFile::ReadUser | QFile::WriteUser);
     m_DB.close();
     m_DB.setDatabaseName(name);
     if (!m_DB.open())
