@@ -15,7 +15,7 @@ void PageParser::validate()
 
     foreach (QString row, rows)
     {
-        if (isGameRow(row) || isDateRow(row))
+        if (row == QString("FINAL"))
         {
             m_IsPageValid = true;
             return;
@@ -23,26 +23,24 @@ void PageParser::validate()
     }
 }
 
-QList<GameModel> PageParser::parsePage()
+QList<QPair<bool, bool> > PageParser::parsePage()
 {
-    QList<GameModel> games;
+    QList<QPair<bool, bool> > games;
 
     QStringList rows = m_Page.split("\n");
 
-    foreach (QString row, rows)
+    for (int i = 0; i < rows.length(); ++i)
     {
-        if (isDateRow(row))
+        QString row = rows[i];
+        if (row == QString("FINAL"))
         {
-            m_GameDate = parseDate(row);
-        }
-
-        if (isGameRow(row))
-        {
-            GameModel game = parseGame(m_GameDate, row);
-            games.append(game);
-            qDebug() << game.getDate()
-                     << game.getHomeTeam() << game.getHomeScore()
-                     << game.getVisitorScore() << game.getVisitorTeam();
+            ++i;
+            ++i;
+            ++i; // for < 2015
+            QString guestScoresRow = rows[++i];
+            QString homeScoresRow = rows[++i];
+//            qDebug () << guestScoresRow << "\n" << homeScoresRow;
+            games.append(parseGame(guestScoresRow, homeScoresRow));
         }
     }
 
@@ -57,15 +55,50 @@ QDate PageParser::parseDate(QString &row)
     return locale.toDate(strDate, "yyyyMMMdd");
 }
 
-GameModel PageParser::parseGame(QDate date, QString &row)
+QPair<bool, bool> PageParser::parseGame(QString &guestScoresRow, QString &homeScoresRow)
 {
-    QStringList gameTokens = tokenizeRow(row);
-    QString visitorTeam = gameTokens.at(2);
-    QString homeTeam = gameTokens.at(4);
-    int visitorScore = gameTokens.at(5).toInt();
-    int homeScore = gameTokens.at(7).toInt();
+    QStringList guestScoresTokens = tokenizeRow(guestScoresRow);
+    QStringList homeScoresTokens  = tokenizeRow(homeScoresRow);
+    bool ok;
+    int gQ1 = guestScoresTokens.at(1).toInt(&ok);
+    int gQ2 = guestScoresTokens.at(2).toInt(&ok);
+    int gQ3 = guestScoresTokens.at(3).toInt(&ok);
+    int hQ1 = homeScoresTokens.at(1).toInt(&ok);
+    int hQ2 = homeScoresTokens.at(2).toInt(&ok);
+    int hQ3 = homeScoresTokens.at(3).toInt(&ok);
 
-    return GameModel(date, homeTeam, homeScore, visitorTeam, visitorScore);
+    int guestTotalScore = guestScoresTokens.last().toInt(&ok);
+    int homeTotalScore = homeScoresTokens.last().toInt(&ok);
+
+    if (!ok) {
+        qDebug() << "====================== " << guestScoresRow << homeScoresRow;
+        return QPair<bool, bool>(false, false);
+    }
+
+    int guestQ3Score              = gQ1 + gQ2 + gQ3;
+    int homeQ3Score               = hQ1 + hQ2 + hQ3;
+
+    QPair<bool, bool> result;
+
+    if (qAbs(guestQ3Score - homeQ3Score) >= 8)
+    {
+        if ((guestQ3Score > homeQ3Score && guestTotalScore > homeTotalScore) ||
+                (guestQ3Score < homeQ3Score && guestTotalScore < homeTotalScore))
+        {
+            qDebug() << guestTotalScore << homeTotalScore;
+            result = QPair<bool, bool>(true, true);
+        }
+        else
+        {
+            result = QPair<bool, bool>(true, false);
+        }
+    }
+    else
+    {
+        result = QPair<bool, bool>(false, false);
+    }
+
+    return result;
 }
 
 bool PageParser::isDateRow(QString &row)

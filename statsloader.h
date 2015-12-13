@@ -21,14 +21,16 @@ signals:
     void loaded();
 
 private:
-    void loadCurrentMonth();
-    void loadNextMonth();
+    void loadCurrentDay();
+    void loadNextDay();
     void loadFinished(bool ok);
 
     QDate m_FromDate;
     QDate m_ToDate;
     QDate m_CurrDate;
     QWebView *m_WebView;
+    uint _GamesCount;
+    uint _WinsCount;
 };
 
 #endif // STATSLOADER_H

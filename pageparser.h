@@ -10,12 +10,12 @@ class PageParser
 public:
     PageParser(QString page, QDate currDate);
     bool isPageValid() { return m_IsPageValid; }
-    QList<GameModel> parsePage();
+    QList<QPair<bool, bool> > parsePage();
 
 private:
     void validate();
     QDate parseDate(QString &row);
-    GameModel parseGame(QDate date, QString &row);
+    QPair<bool, bool> parseGame(QString &guestScoresRow, QString &homeScoresRow);
     bool isDateRow(QString &row);
     bool isGameRow(QString &row);
     QStringList tokenizeRow(QString &row);

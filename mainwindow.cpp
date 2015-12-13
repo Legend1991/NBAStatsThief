@@ -50,6 +50,7 @@ void MainWindow::setTimeRangeContent()
         ui->cbFromYear->addItem(QString::number(i), i);
         ui->cbToYear->addItem(QString::number(i), i);
     }
+    ui->cbFromYear->setCurrentIndex(currentDate.year() - START_YEAR);
     ui->cbToYear->setCurrentIndex(currentDate.year() - START_YEAR);
 
     for (int i = JANUARY; i <= DECEMBER; ++i)
@@ -88,8 +89,8 @@ void MainWindow::stealStats()
 {
     ui->pbStartStealing->setEnabled(false);
     DBManager::inst()->setPath(ui->leOutputDB->text());
-    QDate fromDate = QDate(ui->cbFromYear->currentData().toInt(), ui->cbFromMonth->currentData().toInt(), 1);
-    QDate toDate = QDate(ui->cbToYear->currentData().toInt(), ui->cbToMonth->currentData().toInt(), 1);
+    QDate fromDate = QDate(ui->cbFromYear->currentData().toInt(), ui->cbFromMonth->currentData().toInt(), 2);
+    QDate toDate = QDate(ui->cbToYear->currentData().toInt(), ui->cbToMonth->currentData().toInt(), 12);
     m_Loader.setTimeRange(fromDate, toDate);
     m_Loader.load();
 }
