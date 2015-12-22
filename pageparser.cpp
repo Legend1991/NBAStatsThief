@@ -37,9 +37,9 @@ QList<QPair<bool, bool> > PageParser::parsePage()
             ++i;
             ++i;
             ++i; // for < 2015
-            QString guestScoresRow = rows[++i];
-            QString homeScoresRow = rows[++i];
-//            qDebug () << guestScoresRow << "\n" << homeScoresRow;
+            QString guestScoresRow = (rows[++i]).mid(4);
+            QString homeScoresRow = (rows[++i]).mid(4);
+//            qDebug () << "======= rows " << guestScoresRow << "\n" << homeScoresRow;
             games.append(parseGame(guestScoresRow, homeScoresRow));
         }
     }
@@ -59,13 +59,22 @@ QPair<bool, bool> PageParser::parseGame(QString &guestScoresRow, QString &homeSc
 {
     QStringList guestScoresTokens = tokenizeRow(guestScoresRow);
     QStringList homeScoresTokens  = tokenizeRow(homeScoresRow);
+
+    if (guestScoresTokens.length() < 5 || homeScoresTokens.length() < 5) {
+        qDebug() << "====================== " << guestScoresRow << homeScoresRow;
+        return QPair<bool, bool>(false, false);
+    }
+
     bool ok;
-    int gQ1 = guestScoresTokens.at(1).toInt(&ok);
-    int gQ2 = guestScoresTokens.at(2).toInt(&ok);
-    int gQ3 = guestScoresTokens.at(3).toInt(&ok);
-    int hQ1 = homeScoresTokens.at(1).toInt(&ok);
-    int hQ2 = homeScoresTokens.at(2).toInt(&ok);
-    int hQ3 = homeScoresTokens.at(3).toInt(&ok);
+    int gQ1 = guestScoresTokens.at(0).toInt(&ok);
+    int gQ2 = guestScoresTokens.at(1).toInt(&ok);
+    int gQ3 = guestScoresTokens.at(2).toInt(&ok);
+    int gQ4 = guestScoresTokens.at(3).toInt(&ok);
+
+    int hQ1 = homeScoresTokens.at(0).toInt(&ok);
+    int hQ2 = homeScoresTokens.at(1).toInt(&ok);
+    int hQ3 = homeScoresTokens.at(2).toInt(&ok);
+    int hQ4 = homeScoresTokens.at(3).toInt(&ok);
 
     int guestTotalScore = guestScoresTokens.last().toInt(&ok);
     int homeTotalScore = homeScoresTokens.last().toInt(&ok);
@@ -75,17 +84,27 @@ QPair<bool, bool> PageParser::parseGame(QString &guestScoresRow, QString &homeSc
         return QPair<bool, bool>(false, false);
     }
 
-    int guestQ3Score              = gQ1 + gQ2 + gQ3;
-    int homeQ3Score               = hQ1 + hQ2 + hQ3;
+    int guestQ3Score              = gQ1 + gQ2; // + gQ3;
+    int homeQ3Score               = hQ1 + hQ2; // + hQ3;
 
     QPair<bool, bool> result;
 
-    if (qAbs(guestQ3Score - homeQ3Score) >= 8)
+//    if ((guestQ3Score + homeQ3Score) * 2 <= guestTotalScore + homeTotalScore)
+//    {
+//        qDebug() << (guestTotalScore + homeTotalScore) - ((guestQ3Score + homeQ3Score) * 2);
+//        result = QPair<bool, bool>(true, true);
+//    }
+//    else
+//    {
+//        result = QPair<bool, bool>(true, false);
+//    }
+
+    if (qAbs(guestQ3Score - homeQ3Score) >= 2 && qAbs(guestQ3Score - homeQ3Score) <= 5)
     {
         if ((guestQ3Score > homeQ3Score && guestTotalScore > homeTotalScore) ||
                 (guestQ3Score < homeQ3Score && guestTotalScore < homeTotalScore))
         {
-            qDebug() << guestTotalScore << homeTotalScore;
+            qDebug() << guestTotalScore << homeTotalScore << guestScoresRow << homeScoresRow;;
             result = QPair<bool, bool>(true, true);
         }
         else
