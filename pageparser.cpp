@@ -32,13 +32,18 @@ QList<QPair<bool, bool> > PageParser::parsePage()
     for (int i = 0; i < rows.length(); ++i)
     {
         QString row = rows[i];
+//        qDebug() << row;
         if (row == QString("FINAL"))
         {
             ++i;
             ++i;
-            ++i; // for < 2015
-            QString guestScoresRow = (rows[++i]).mid(4);
-            QString homeScoresRow = (rows[++i]).mid(4);
+//            ++i; // for < 2015
+//            QString guestScoresRow = (rows[++i]).mid(4); // for < 2015
+//            QString homeScoresRow = (rows[++i]).mid(4); // for < 2015
+            QString guestScoresRow = rows[++i];
+            QString homeScoresRow = rows[++i];
+            guestScoresRow += " " + rows[++i]; // for < 2013
+            homeScoresRow += " " + rows[++i]; // for < 2013
 //            qDebug () << "======= rows " << guestScoresRow << "\n" << homeScoresRow;
             games.append(parseGame(guestScoresRow, homeScoresRow));
         }
@@ -99,7 +104,7 @@ QPair<bool, bool> PageParser::parseGame(QString &guestScoresRow, QString &homeSc
 //        result = QPair<bool, bool>(true, false);
 //    }
 
-    if (qAbs(guestQ3Score - homeQ3Score) >= 2 && qAbs(guestQ3Score - homeQ3Score) <= 5)
+    if (qAbs(guestQ3Score - homeQ3Score) >= 5 && qAbs(guestQ3Score - homeQ3Score) <= 8)
     {
         if ((guestQ3Score > homeQ3Score && guestTotalScore > homeTotalScore) ||
                 (guestQ3Score < homeQ3Score && guestTotalScore < homeTotalScore))
