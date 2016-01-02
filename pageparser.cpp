@@ -36,18 +36,18 @@ QList<GameModel> PageParser::parsePage()
         if (row == QString("FINAL"))
         {
             ++i;
-//            QPair<QString, QString> teamNames = parseTeamNames(rows[i]);
-            ++i;
             ++i; // for < 2015
-            QPair<QString, QString> teamNames;
-            QString guestScoresRow = (rows[++i]).mid(4); // for < 2015
-            teamNames.first = (rows[i]).mid(0, 3); // for < 2015
-            QString homeScoresRow = (rows[++i]).mid(4); // for < 2015
-            teamNames.second = (rows[i]).mid(0, 3); // for < 2015
-//            QString guestScoresRow = rows[++i];
-//            QString homeScoresRow = rows[++i];
-//            guestScoresRow += " " + rows[++i]; // for < 2013
-//            homeScoresRow += " " + rows[++i]; // for < 2013
+            QPair<QString, QString> teamNames = parseTeamNames(rows[i]);
+//            ++i;
+//            QPair<QString, QString> teamNames;
+//            QString guestScoresRow = (rows[++i]).mid(4); // for < 2015
+//            teamNames.first = (rows[i]).mid(0, 3); // for < 2015
+//            QString homeScoresRow = (rows[++i]).mid(4); // for < 2015
+//            teamNames.second = (rows[i]).mid(0, 3); // for < 2015
+            QString guestScoresRow = rows[++i];
+            QString homeScoresRow = rows[++i];
+            guestScoresRow += " " + rows[++i]; // for < 2013
+            homeScoresRow += " " + rows[++i]; // for < 2013
 //            qDebug () << "======= rows " << teamNames.first << guestScoresRow << "\n" << teamNames.second << homeScoresRow;
             games.append(parseGame(teamNames.first, teamNames.second, guestScoresRow, homeScoresRow));
         }
