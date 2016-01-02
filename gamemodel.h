@@ -7,6 +7,7 @@
 class GameModel
 {
 public:
+    GameModel();
     GameModel(QDate date, QString homeTeam, QString visitorTeam,
               int hQ1, int vQ1,
               int hQ2, int vQ2,
@@ -17,6 +18,7 @@ public:
     QDate getDate() { return m_Date; }
     QString getHomeTeam() { return m_HomeTeam; }
     int getHTotal() { return m_HTotal; }
+    int getVTotal() { return m_VTotal; }
     QString getVisitorTeam() { return m_VisitorTeam; }
     int getHQ1() { return m_hQ1; }
     int getVQ1() { return m_vQ1; }
@@ -26,6 +28,7 @@ public:
     int getVQ3() { return m_vQ3; }
     int getHQ4() { return m_hQ4; }
     int getVQ4() { return m_vQ4; }
+    bool isValid() { return _isValid; }
 
 private:
     QDate m_Date;
@@ -41,6 +44,7 @@ private:
     int m_vQ3;
     int m_hQ4;
     int m_vQ4;
+    bool _isValid;
 };
 
 #endif // GAMEMODEL_H

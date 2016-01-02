@@ -23,9 +23,9 @@ void PageParser::validate()
     }
 }
 
-QList<QPair<bool, bool> > PageParser::parsePage()
+QList<GameModel> PageParser::parsePage()
 {
-    QList<QPair<bool, bool> > games;
+    QList<GameModel> games;
 
     QStringList rows = m_Page.split("\n");
 
@@ -36,16 +36,20 @@ QList<QPair<bool, bool> > PageParser::parsePage()
         if (row == QString("FINAL"))
         {
             ++i;
+//            QPair<QString, QString> teamNames = parseTeamNames(rows[i]);
             ++i;
-//            ++i; // for < 2015
-//            QString guestScoresRow = (rows[++i]).mid(4); // for < 2015
-//            QString homeScoresRow = (rows[++i]).mid(4); // for < 2015
-            QString guestScoresRow = rows[++i];
-            QString homeScoresRow = rows[++i];
-            guestScoresRow += " " + rows[++i]; // for < 2013
-            homeScoresRow += " " + rows[++i]; // for < 2013
-//            qDebug () << "======= rows " << guestScoresRow << "\n" << homeScoresRow;
-            games.append(parseGame(guestScoresRow, homeScoresRow));
+            ++i; // for < 2015
+            QPair<QString, QString> teamNames;
+            QString guestScoresRow = (rows[++i]).mid(4); // for < 2015
+            teamNames.first = (rows[i]).mid(0, 3); // for < 2015
+            QString homeScoresRow = (rows[++i]).mid(4); // for < 2015
+            teamNames.second = (rows[i]).mid(0, 3); // for < 2015
+//            QString guestScoresRow = rows[++i];
+//            QString homeScoresRow = rows[++i];
+//            guestScoresRow += " " + rows[++i]; // for < 2013
+//            homeScoresRow += " " + rows[++i]; // for < 2013
+//            qDebug () << "======= rows " << teamNames.first << guestScoresRow << "\n" << teamNames.second << homeScoresRow;
+            games.append(parseGame(teamNames.first, teamNames.second, guestScoresRow, homeScoresRow));
         }
     }
 
@@ -60,17 +64,19 @@ QDate PageParser::parseDate(QString &row)
     return locale.toDate(strDate, "yyyyMMMdd");
 }
 
-QPair<bool, bool> PageParser::parseGame(QString &guestScoresRow, QString &homeScoresRow)
+GameModel PageParser::parseGame(QString &guestTeam, QString &homeTeam, QString &guestScoresRow, QString &homeScoresRow)
 {
     QStringList guestScoresTokens = tokenizeRow(guestScoresRow);
     QStringList homeScoresTokens  = tokenizeRow(homeScoresRow);
 
-    if (guestScoresTokens.length() < 5 || homeScoresTokens.length() < 5) {
+    if (guestScoresTokens.length() < 5 || homeScoresTokens.length() < 5)
+    {
         qDebug() << "====================== " << guestScoresRow << homeScoresRow;
-        return QPair<bool, bool>(false, false);
+        return GameModel();
     }
 
     bool ok;
+
     int gQ1 = guestScoresTokens.at(0).toInt(&ok);
     int gQ2 = guestScoresTokens.at(1).toInt(&ok);
     int gQ3 = guestScoresTokens.at(2).toInt(&ok);
@@ -84,45 +90,64 @@ QPair<bool, bool> PageParser::parseGame(QString &guestScoresRow, QString &homeSc
     int guestTotalScore = guestScoresTokens.last().toInt(&ok);
     int homeTotalScore = homeScoresTokens.last().toInt(&ok);
 
-    if (!ok) {
+    if (!ok)
+    {
         qDebug() << "====================== " << guestScoresRow << homeScoresRow;
-        return QPair<bool, bool>(false, false);
+        return GameModel();
     }
 
-    int guestQ3Score              = gQ1 + gQ2; // + gQ3;
-    int homeQ3Score               = hQ1 + hQ2; // + hQ3;
+//    int guestQ3Score              = gQ1 + gQ2; // + gQ3;
+//    int homeQ3Score               = hQ1 + hQ2; // + hQ3;
 
-    QPair<bool, bool> result;
+//    QPair<bool, bool> result;
 
-//    if ((guestQ3Score + homeQ3Score) * 2 <= guestTotalScore + homeTotalScore)
+//    if (qAbs(guestQ3Score - homeQ3Score) >= 5 && qAbs(guestQ3Score - homeQ3Score) <= 8)
 //    {
-//        qDebug() << (guestTotalScore + homeTotalScore) - ((guestQ3Score + homeQ3Score) * 2);
-//        result = QPair<bool, bool>(true, true);
+//        if ((guestQ3Score > homeQ3Score && guestTotalScore > homeTotalScore) ||
+//                (guestQ3Score < homeQ3Score && guestTotalScore < homeTotalScore))
+//        {
+//            qDebug() << guestTotalScore << homeTotalScore << guestScoresRow << homeScoresRow;;
+//            result = QPair<bool, bool>(true, true);
+//        }
+//        else
+//        {
+//            result = QPair<bool, bool>(true, false);
+//        }
 //    }
 //    else
 //    {
-//        result = QPair<bool, bool>(true, false);
+//        result = QPair<bool, bool>(false, false);
 //    }
 
-    if (qAbs(guestQ3Score - homeQ3Score) >= 5 && qAbs(guestQ3Score - homeQ3Score) <= 8)
+    return GameModel(m_GameDate, homeTeam, guestTeam,
+                     hQ1, gQ1,
+                     hQ2, gQ2,
+                     hQ3, gQ3,
+                     hQ4, gQ4,
+                     homeTotalScore, guestTotalScore);
+}
+
+QPair<QString, QString> PageParser::parseTeamNames(QString teamNamesRow)
+{
+    QString guestTeam = teamNamesRow.mid(0, 3);
+
+    int i = 0;
+    bool ok = false;
+
+    for (; i < teamNamesRow.length() - 3 && !ok; ++i)
     {
-        if ((guestQ3Score > homeQ3Score && guestTotalScore > homeTotalScore) ||
-                (guestQ3Score < homeQ3Score && guestTotalScore < homeTotalScore))
-        {
-            qDebug() << guestTotalScore << homeTotalScore << guestScoresRow << homeScoresRow;;
-            result = QPair<bool, bool>(true, true);
-        }
-        else
-        {
-            result = QPair<bool, bool>(true, false);
-        }
-    }
-    else
-    {
-        result = QPair<bool, bool>(false, false);
+        teamNamesRow.mid(i, 1).toInt(&ok);
     }
 
-    return result;
+    for (; i < teamNamesRow.length() - 3 && ok;)
+    {
+        ++i;
+        teamNamesRow.mid(i, 1).toInt(&ok);
+    }
+
+    QString homeTeam = teamNamesRow.mid(i, 3);
+
+    return QPair<QString, QString>(guestTeam, homeTeam);
 }
 
 bool PageParser::isDateRow(QString &row)

@@ -9,7 +9,7 @@ class DBManager
 {
 public:
     static DBManager *inst();
-    void setPath(QString name);
+    void createDB(QString name);
     void add(QList<GameModel> games);
 
 private:

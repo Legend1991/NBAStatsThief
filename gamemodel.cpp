@@ -1,5 +1,10 @@
 #include "gamemodel.h"
 
+GameModel::GameModel()
+{
+    _isValid = false;
+}
+
 GameModel::GameModel(QDate date, QString homeTeam, QString visitorTeam,
                      int hQ1, int vQ1,
                      int hQ2, int vQ2,
@@ -7,6 +12,7 @@ GameModel::GameModel(QDate date, QString homeTeam, QString visitorTeam,
                      int hQ4, int vQ4,
                      int hTotal, int vTotal)
 {
+    _isValid = true;
     m_Date = date;
     m_HomeTeam = homeTeam;
     m_HTotal = hTotal;

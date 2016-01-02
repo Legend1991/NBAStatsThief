@@ -32,7 +32,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QString fileName = QDate::currentDate().addDays(1).toString("nbastats.sqlite");
     QString location = QStandardPaths::locate(QStandardPaths::DesktopLocation, NULL, QStandardPaths::LocateDirectory);
-    ui->leOutputDB->setText(location + fileName);
+//    ui->leOutputDB->setText(location + fileName);
+    ui->leOutputDB->setText("D:/" + fileName);
     connect(ui->pbBrowse, &QPushButton::clicked, this, &MainWindow::browse);
 }
 
@@ -88,7 +89,7 @@ void MainWindow::checkTimeRange()
 void MainWindow::stealStats()
 {
     ui->pbStartStealing->setEnabled(false);
-    DBManager::inst()->setPath(ui->leOutputDB->text());
+    DBManager::inst()->createDB(ui->leOutputDB->text());
     QDate fromDate = QDate(ui->cbFromYear->currentData().toInt(), ui->cbFromMonth->currentData().toInt(), 2);
     QDate toDate = QDate(ui->cbToYear->currentData().toInt(), ui->cbToMonth->currentData().toInt(), 12);
     m_Loader.setTimeRange(fromDate, toDate);

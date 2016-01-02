@@ -31,8 +31,8 @@ StatsLoader::~StatsLoader()
 void StatsLoader::load()
 {
 //    m_CurrDate = m_FromDate;
-    m_CurrDate.setDate(2013, 5, 5);
-    m_ToDate.setDate(2013, 6, 30);
+    m_CurrDate.setDate(2014, 6, 5);
+    m_ToDate.setDate(2014, 7, 4);
     loadCurrentDay();
 }
 
@@ -75,20 +75,27 @@ void StatsLoader::loadFinished(bool ok)
         return;
     }
 
+//    qDebug() << m_CurrDate;
+//    QList<boolPair> result = parser.parsePage();
+//    foreach (boolPair game, result)
+//    {
+//        if (game.first)
+//        {
+//            _GamesCount++;
+//            if (game.second)
+//            {
+//                _WinsCount++;
+//            }
+//        }
+//    }
+//    qDebug() << "Games " << _GamesCount << "\tWins " << _WinsCount;
+
+    QList<GameModel> result = parser.parsePage();
     qDebug() << m_CurrDate;
-    QList<boolPair> result = parser.parsePage();
-    foreach (boolPair game, result)
-    {
-        if (game.first)
-        {
-            _GamesCount++;
-            if (game.second)
-            {
-                _WinsCount++;
-            }
-        }
+    foreach (GameModel game, result) {
+        qDebug() << game.getVisitorTeam() << game.getHomeTeam() << game.getVTotal() << game.getHTotal();
     }
-    qDebug() << "Games " << _GamesCount << "\tWins " << _WinsCount;
+    DBManager::inst()->add(result);
 
     loadNextDay();
 }
