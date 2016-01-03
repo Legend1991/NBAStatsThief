@@ -96,29 +96,6 @@ GameModel PageParser::parseGame(QString &guestTeam, QString &homeTeam, QString &
         return GameModel();
     }
 
-//    int guestQ3Score              = gQ1 + gQ2; // + gQ3;
-//    int homeQ3Score               = hQ1 + hQ2; // + hQ3;
-
-//    QPair<bool, bool> result;
-
-//    if (qAbs(guestQ3Score - homeQ3Score) >= 5 && qAbs(guestQ3Score - homeQ3Score) <= 8)
-//    {
-//        if ((guestQ3Score > homeQ3Score && guestTotalScore > homeTotalScore) ||
-//                (guestQ3Score < homeQ3Score && guestTotalScore < homeTotalScore))
-//        {
-//            qDebug() << guestTotalScore << homeTotalScore << guestScoresRow << homeScoresRow;;
-//            result = QPair<bool, bool>(true, true);
-//        }
-//        else
-//        {
-//            result = QPair<bool, bool>(true, false);
-//        }
-//    }
-//    else
-//    {
-//        result = QPair<bool, bool>(false, false);
-//    }
-
     return GameModel(m_GameDate, homeTeam, guestTeam,
                      hQ1, gQ1,
                      hQ2, gQ2,
