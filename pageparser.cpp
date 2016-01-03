@@ -29,7 +29,7 @@ QList<GameModel> PageParser::parsePage()
 
     QStringList rows = m_Page.split("\n");
 
-    for (int i = 0; i < rows.length(); ++i)
+    for (int i = 0; i < rows.length() - 6; ++i)
     {
         QString row = rows[i];
 //        qDebug() << row;
@@ -56,7 +56,7 @@ QList<GameModel> PageParser::parsePage()
     return games;
 }
 
-QDate PageParser::parseDate(QString &row)
+QDate PageParser::parseDate(QString row)
 {
     QStringList dateTokens = tokenizeRow(row);
     QLocale locale(QLocale::English, QLocale::UnitedStates);
@@ -64,7 +64,7 @@ QDate PageParser::parseDate(QString &row)
     return locale.toDate(strDate, "yyyyMMMdd");
 }
 
-GameModel PageParser::parseGame(QString &guestTeam, QString &homeTeam, QString &guestScoresRow, QString &homeScoresRow)
+GameModel PageParser::parseGame(QString guestTeam, QString homeTeam, QString guestScoresRow, QString homeScoresRow)
 {
     QStringList guestScoresTokens = tokenizeRow(guestScoresRow);
     QStringList homeScoresTokens  = tokenizeRow(homeScoresRow);
@@ -127,19 +127,19 @@ QPair<QString, QString> PageParser::parseTeamNames(QString teamNamesRow)
     return QPair<QString, QString>(guestTeam, homeTeam);
 }
 
-bool PageParser::isDateRow(QString &row)
+bool PageParser::isDateRow(QString row)
 {
     QStringList splitedRow = tokenizeRow(row);
     return splitedRow.count() == 3 && QRegExp(".*\\d$").exactMatch(row);
 }
 
-bool PageParser::isGameRow(QString &row)
+bool PageParser::isGameRow(QString row)
 {
     QStringList splitedRow = tokenizeRow(row);
     return splitedRow.count() == 8;
 }
 
-QStringList PageParser::tokenizeRow(QString &row)
+QStringList PageParser::tokenizeRow(QString row)
 {
     return row.trimmed().split(QRegExp("\\s+|\\t+"));
 }

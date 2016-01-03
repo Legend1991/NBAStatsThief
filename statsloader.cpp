@@ -31,8 +31,8 @@ StatsLoader::~StatsLoader()
 void StatsLoader::load()
 {
 //    m_CurrDate = m_FromDate;
-    m_CurrDate.setDate(2013, 6, 5);
-    m_ToDate.setDate(2013, 7, 4);
+    m_CurrDate.setDate(2011, 6, 4);
+    m_ToDate.setDate(2011, 7, 1);
     loadCurrentDay();
 }
 
